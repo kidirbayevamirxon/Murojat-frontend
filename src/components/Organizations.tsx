@@ -52,8 +52,8 @@ const OrganizationsTable: React.FC = () => {
         </div>
       </div>
 
-      <div className="absolute w-full left-0">
-        <hr className="border-t border-gray-200" />
+      <div className="w-full left-0">
+        <hr className="border-t border-gray-300" />
       </div>
 
       {/* Table */}

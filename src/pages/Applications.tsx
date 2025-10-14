@@ -116,7 +116,7 @@ export default function Applications() {
       </div>
 
       {/* Tabs */}
-      <div className="relative border-b pb-2 mb-4 overflow-x-auto">
+      <div className="relative border-none pb-2 mb-4 overflow-x-auto">
         <div className="flex gap-6 relative">
           {tabs.map((tab) => (
             <button

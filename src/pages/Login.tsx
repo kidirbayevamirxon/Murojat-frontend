@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 const Login: React.FC = () => {
-      const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,15 +19,20 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
       const res = await axiosInstance.post("/auth/login", {
-        login:username,
-        password:password,
+        login: username,
+        password: password,
       });
-
-      localStorage.setItem("accessToken", res.data.accessToken);
-      localStorage.setItem("refreshToken", res.data.refreshToken);
-
+      localStorage.setItem("accessToken", res.data.access_token);
+      localStorage.setItem("refreshToken", res.data.refresh_token);
       toast.success("Login successful!");
-      window.location.href = "/"; 
+      const role = res.data.role;      
+      if (role === "admin") {
+        window.location.href = "/";
+      } else if (role === "organ") {
+        window.location.href = "/organ";
+      } else {
+        window.location.href = "/";
+      }
     } catch (err: any) {
       console.error(err);
       toast.error(
@@ -37,6 +42,7 @@ const Login: React.FC = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#f6f7f8]">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-10">
@@ -59,7 +65,7 @@ const Login: React.FC = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="block w-full rounded-t-md border border-gray-300 px-3 py-4 bg-gray-100 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 text-sm"
               />
-               <input
+              <input
                 type="password"
                 name="password"
                 placeholder="Password"

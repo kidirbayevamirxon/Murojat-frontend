@@ -1,15 +1,13 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Shield, Building2, Grid2X2, BarChart4, SettingsIcon } from "lucide-react";
+import { Shield, LucideBuilding2, SettingsIcon } from "lucide-react";
 
-export default function SidebarLayout() {
+export default function OrganSidebarLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menu = [
-    { name: "Organizations", icon: <Building2 size={18} />, path: "/" },
-    { name: "Applications", icon: <Grid2X2 size={18} />, path: "/applications" },
-    { name: "Statistics", icon: <BarChart4 size={18} />, path: "/statistics" },
-    { name: "Settings", icon: <SettingsIcon size={18} />, path: "/settings" },
+    { name: "Murojatlar", icon: <LucideBuilding2 size={18} />, path: "/organ" },
+    { name: "Settings", icon: <SettingsIcon size={18} />, path: "/organ/settings" },
   ];
 
   return (
