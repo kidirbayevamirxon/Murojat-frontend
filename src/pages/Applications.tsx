@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { axiosInstance } from "@/api/api";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const STATUS_DISPLAY_MAP = {
   not_completed: "Not Completed",
@@ -17,11 +18,6 @@ const STATUS_DISPLAY_MAP = {
 
 type StatusKey = keyof typeof STATUS_DISPLAY_MAP;
 type StatusValue = (typeof STATUS_DISPLAY_MAP)[StatusKey];
-
-// const DISPLAY_TO_STATUS_MAP: Record<StatusValue, StatusKey> =
-//   Object.fromEntries(
-//     Object.entries(STATUS_DISPLAY_MAP).map(([key, value]) => [value, key])
-//   ) as Record<StatusValue, StatusKey>;
 
 type Application = {
   id: string;
@@ -50,21 +46,19 @@ export default function Applications() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchApplications = async () => {
     setLoading(true);
     setError(null);
     try {
-      const apiStatus = activeTab;
-      const params = { status: apiStatus, page: 1 };
-
       const response = await axiosInstance.get("/admin/get_send_apps", {
-        params,
+        params: { status: activeTab, page: 1 },
       });
 
       const transformedApps: Application[] = response.data.items.map(
         (item: any) => ({
-          id: `APP-${item.id}`,
+          id: item.id, // ❗ faqat raqamni saqlaymiz
           name: item.full_name,
           phone: item.phone || "N/A",
           organization: item.organization || "N/A",
@@ -91,11 +85,12 @@ export default function Applications() {
     (app) =>
       app.name.toLowerCase().includes(search.toLowerCase()) ||
       app.organization.toLowerCase().includes(search.toLowerCase()) ||
-      app.id.toLowerCase().includes(search.toLowerCase())
+      app.id.toString().includes(search)
   );
 
   return (
     <div className="p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">Applications</h1>
@@ -111,23 +106,16 @@ export default function Applications() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="
-      w-full
-      rounded-xl
-      border border-gray-200
-      pl-10 pr-4 py-2.5
-      text-sm text-gray-700
-      shadow-sm
-      bg-white
-      placeholder:text-gray-400
-      focus:outline-none
-      focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-      transition-all duration-200
-      hover:border-gray-300
-    "
+              w-full rounded-xl border border-gray-200 pl-10 pr-4 py-2.5
+              text-sm text-gray-700 shadow-sm bg-white placeholder:text-gray-400
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              transition-all duration-200 hover:border-gray-300
+            "
           />
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="relative border-b pb-2 mb-4 overflow-x-auto">
         <div className="flex gap-6 relative">
           {tabs.map((tab) => (
@@ -154,6 +142,7 @@ export default function Applications() {
         <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-gray-200 z-0" />
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full text-left text-sm border-separate border-spacing-y-2">
           <thead className="bg-gray-100 text-gray-700 rounded-lg">
@@ -182,10 +171,11 @@ export default function Applications() {
               filtered.map((app) => (
                 <tr
                   key={app.id}
-                  className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200 rounded-lg"
+                  onClick={() => navigate(`/applications/info/${app.id}`)} // ✅ TO‘G‘RI format
+                  className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200 rounded-lg cursor-pointer"
                 >
                   <td className="px-4 py-3 font-medium text-blue-600 rounded-l-lg border-l border-gray-100">
-                    {app.id}
+                    APP-{app.id}
                   </td>
                   <td className="px-4 py-3">{app.name}</td>
                   <td className="px-4 py-3">{app.phone}</td>
