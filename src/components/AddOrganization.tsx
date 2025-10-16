@@ -52,18 +52,17 @@ const AddOrganizationDrawer: React.FC<AddOrganizationDrawerProps> = ({
 
   return (
     <Drawer open={open} onOpenChange={onClose}>
-      <DrawerContent className="bg-white rounded-t-2xl shadow-lg border-t border-blue-100 [&>div:first-child]:bg-blue-400">
-        <DrawerHeader className="border-b border-blue-100 pb-3 bg-blue-50">
-          <DrawerTitle className="text-blue-700 font-semibold text-lg">
-            ➕ Add Organization
+      <DrawerContent className="bg-white dark:bg-[#1a2533] rounded-t-2xl shadow-lg border-t border-blue-100 dark:border-blue-900 [&>div:first-child]:bg-blue-400 dark:[&>div:first-child]:bg-blue-600">
+        <DrawerHeader className="border-b border-blue-100 dark:border-blue-900 pb-3 bg-blue-50 dark:bg-blue-900/20 mt-4">
+          <DrawerTitle className="text-blue-700 dark:text-blue-300 font-semibold text-lg">
+            + Add Organization
           </DrawerTitle>
         </DrawerHeader>
-
         <div className="p-5 space-y-4">
           <div>
             <Label
               htmlFor="name"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Organization Name
             </Label>
@@ -72,14 +71,13 @@ const AddOrganizationDrawer: React.FC<AddOrganizationDrawerProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter organization name"
-              className="mt-1 border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 border-blue-300 dark:border-blue-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
-
           <div>
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Password
             </Label>
@@ -89,21 +87,23 @@ const AddOrganizationDrawer: React.FC<AddOrganizationDrawerProps> = ({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
-              className="mt-1 border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 border-blue-300 dark:border-blue-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
         </div>
-
-        <DrawerFooter className="flex justify-end gap-2 border-t border-blue-100 bg-blue-50 px-5 py-3 rounded-b-2xl">
+        <DrawerFooter className="flex justify-end gap-2 border-t border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 px-5 py-3 rounded-b-2xl">
           <DrawerClose asChild>
-            <Button variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-100 bg-blue-50 hover:text-blue-700">
+            <Button 
+              variant="outline" 
+              className="border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 bg-blue-50 dark:bg-transparent hover:text-blue-700 dark:hover:text-blue-300"
+            >
               Cancel
             </Button>
           </DrawerClose>
           <Button
             onClick={handleAdd}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white"
           >
             {loading ? "Saving..." : "Save"}
           </Button>

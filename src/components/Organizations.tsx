@@ -18,12 +18,12 @@ const OrganizationsTable: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<{ id: number; name: string } | null>(null);
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
   const fetchOrganizations = () => {
     axiosInstance
       .get("/organization/organization", { params: { page } })
       .then((response) => {
-        console.log("Organizations:", response.data);
         const data = response.data.items || [];
         setOrganizations(data);
         setPagination(response.data.pagination);
@@ -37,44 +37,74 @@ const OrganizationsTable: React.FC = () => {
     fetchOrganizations();
   }, [page]);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Header */}
+    <div
+      className={`p-6 min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-[#101922] text-gray-100"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       <div className="flex justify-between items-center pb-3">
-        <h1 className="text-2xl font-bold text-gray-800">Organizations</h1>
+        <h1 className="text-2xl font-bold">
+          Organizations
+        </h1>
         <div className="flex items-center gap-4">
           <button
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md"
             onClick={() => setDrawerOpen(true)}
           >
-            <span>+</span> Add Organization
+            <span className="text-lg font-bold">+</span> Add Organization
           </button>
         </div>
       </div>
-
-      <div className="w-full left-0">
-        <hr className="border-t border-gray-300" />
-      </div>
-
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden mt-8">
+      <hr className={theme === "dark" ? "border-gray-700 my-4" : "border-gray-300 my-4"} />
+      <div
+        className={`rounded-xl shadow-lg overflow-hidden mt-6 border transition-colors ${
+          theme === "dark"
+            ? "bg-[#1a2533] border-gray-800"
+            : "bg-white border-gray-200"
+        }`}
+      >
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-100 text-left text-xs uppercase font-semibold text-gray-600">
+            <tr
+              className={`text-left text-xs uppercase font-semibold flex justify-between px-8 ${
+                theme === "dark"
+                  ? "bg-[#1e2a3a] text-gray-400"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
               <th className="py-3 px-4">Name</th>
-              <th className="py-3 px-4">Created At</th>
-              <th className="py-3 px-4">Actions</th>
+              {/* <th className="py-3 px-4">Created At</th> */}
+              <th className="py-3 px-6">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className={theme === "dark" ? "divide-gray-800" : "divide-gray-200 divide-y"}>
             {organizations.map((org) => (
-              <tr key={org.id} className="hover:bg-gray-50 transition-colors">
-                <td className="py-3 px-4 font-medium text-gray-900">{org.name}</td>
-                <td className="py-3 px-4 text-gray-600">{org.createdAt || "—"}</td>
+              <tr
+                key={org.id}
+                className={`transition-colors flex justify-between px-8 border-b-2 ${
+                  theme === "dark"
+                    ? "hover:bg-[#223044]"
+                    : "hover:bg-gray-50"
+                }`}
+              >
+                <td className="py-3 px-4 font-medium">{org.name}</td>
+                {/* <td className="py-3 px-4">{org.createdAt || "—"}</td> */}
                 <td className="py-3 px-4">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     <button
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className={`text-sm font-medium ${
+                        theme === "dark"
+                          ? "text-red-400 hover:text-red-300"
+                          : "text-red-600 hover:text-red-800"
+                      }`}
                       onClick={() => {
                         setSelectedOrg(org);
                         setDeleteOpen(true);
@@ -82,8 +112,13 @@ const OrganizationsTable: React.FC = () => {
                     >
                       Delete
                     </button>
+                    <span>|</span>
                     <button
-                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      className={`text-sm font-medium ${
+                        theme === "dark"
+                          ? "text-blue-400 hover:text-blue-300"
+                          : "text-blue-600 hover:text-blue-800"
+                      }`}
                       onClick={() => {
                         setSelectedOrg(org);
                         setEditOpen(true);
@@ -95,10 +130,9 @@ const OrganizationsTable: React.FC = () => {
                 </td>
               </tr>
             ))}
-
             {organizations.length === 0 && (
               <tr>
-                <td colSpan={3} className="text-center text-gray-500 py-6 italic">
+                <td colSpan={3} className="text-center py-6 italic text-gray-500">
                   No organizations found
                 </td>
               </tr>
@@ -106,22 +140,26 @@ const OrganizationsTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
       {pagination && (
         <div className="flex justify-center items-center gap-3 mt-6">
           <button
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+            className={`px-4 py-2 rounded-md disabled:opacity-50 ${
+              theme === "dark"
+                ? "bg-[#1e2a3a] text-gray-300 hover:bg-[#24344a]"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            }`}
             disabled={page <= 1}
             onClick={() => setPage((prev) => prev - 1)}
           >
             Previous
           </button>
-          <span className="text-gray-700">
-            Page {pagination.current_page} of {pagination.total_pages}
-          </span>
+          <span>{`Page ${pagination.current_page} of ${pagination.total_pages}`}</span>
           <button
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
+            className={`px-4 py-2 rounded-md disabled:opacity-50 ${
+              theme === "dark"
+                ? "bg-[#1e2a3a] text-gray-300 hover:bg-[#24344a]"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+            }`}
             disabled={page >= pagination.total_pages}
             onClick={() => setPage((prev) => prev + 1)}
           >
@@ -129,13 +167,11 @@ const OrganizationsTable: React.FC = () => {
           </button>
         </div>
       )}
-
       <AddOrganizationDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         onAdded={fetchOrganizations}
       />
-
       {selectedOrg && (
         <EditOrganizationDrawer
           open={editOpen}
@@ -145,7 +181,7 @@ const OrganizationsTable: React.FC = () => {
           onUpdated={fetchOrganizations}
         />
       )}
-       {selectedOrg && (
+      {selectedOrg && (
         <DeleteOrganizationDrawer
           open={deleteOpen}
           onClose={() => setDeleteOpen(false)}

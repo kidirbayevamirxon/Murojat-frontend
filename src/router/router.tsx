@@ -10,6 +10,7 @@ import AdminStatisticsDetail from "@/components/StatisticsDetails";
 import Settings from "@/pages/Settings";
 import Organ from "@/pages/Organ";
 import OrganSidebarLayout from "@/layout/OrganSideBarLayout";
+import OrganInfarmation from "@/components/OrganInfarmation";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
     element: <OrganSidebarLayout/>,
     children: [
       {path: "/organ", element: <Organ/>},
+      {path: "/organ/info/:id", element: <OrganInfarmation/>},
       {path: "/organ/settings", element: <Settings/>},
     ]
   },

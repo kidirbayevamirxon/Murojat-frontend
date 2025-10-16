@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -15,6 +16,13 @@ export default function Pagination({
   totalItems,
   filteredItems,
 }: PaginationProps) {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") setTheme("dark");
+  }, []);
+
   const pages = [];
 
   for (let i = 1; i <= totalPages; i++) {
@@ -29,21 +37,34 @@ export default function Pagination({
     }
   }
 
+  const isDark = theme === "dark";
+
   return (
-    <div className="flex justify-between items-center mt-6 flex-wrap gap-3">
-      <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-md shadow-sm">
+    <div
+      className={`flex justify-between items-center mt-6 flex-wrap gap-3 ${
+        isDark ? "text-gray-300" : "text-gray-700"
+      }`}
+    >
+      <div
+        className={`text-sm px-4 py-2 rounded-md shadow-sm ${
+          isDark
+            ? "bg-[#1E293B] text-gray-300 border border-gray-700"
+            : "bg-gray-100 text-gray-600"
+        }`}
+      >
         Showing{" "}
-        <span className="font-semibold text-gray-800">{filteredItems}</span> of{" "}
-        <span className="font-semibold text-gray-800">{totalItems}</span>{" "}
-        organizations
+        <span className="font-semibold">{filteredItems}</span> of{" "}
+        <span className="font-semibold">{totalItems}</span> organizations
       </div>
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="sm"
-          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 
-                     hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 
-                     shadow-sm transition-all duration-200"
+          className={`px-4 py-2 rounded-md border transition-all duration-200 ${
+            isDark
+              ? "bg-[#101922] text-gray-200 border-gray-700 hover:bg-blue-900 hover:text-white"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-700"
+          }`}
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
@@ -52,7 +73,7 @@ export default function Pagination({
         <div className="flex items-center gap-1">
           {pages.map((p, index) =>
             p === "..." ? (
-              <span key={index} className="text-gray-400 px-2">
+              <span key={index} className="px-2 text-gray-400">
                 ...
               </span>
             ) : (
@@ -62,8 +83,10 @@ export default function Pagination({
                 size="sm"
                 className={`rounded-md w-8 h-8 font-medium transition-all duration-200 ${
                   p === currentPage
-                    ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700 shadow-md"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 shadow-sm"
+                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                    : isDark
+                    ? "bg-[#101922] text-gray-200 border-gray-700 hover:bg-blue-900 hover:text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-700"
                 }`}
                 onClick={() => onPageChange(Number(p))}
               >
@@ -72,20 +95,21 @@ export default function Pagination({
             )
           )}
         </div>
-
         <Button
           variant="outline"
           size="sm"
-          className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 
-                     hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 
-                     shadow-sm transition-all duration-200"
+          className={`px-4 py-2 rounded-md border transition-all duration-200 ${
+            isDark
+              ? "bg-[#101922] text-gray-200 border-gray-700 hover:bg-blue-900 hover:text-white"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-700"
+          }`}
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
         >
           Next
         </Button>
       </div>
-      <div className="flex w-[23%]"></div>
+      <div className="flex w-[23%]" />
     </div>
   );
 }

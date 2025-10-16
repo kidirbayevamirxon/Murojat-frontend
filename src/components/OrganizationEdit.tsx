@@ -31,6 +31,12 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") setTheme("dark");
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -44,7 +50,6 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
       toast.warning("Please fill in all fields");
       return;
     }
-
     try {
       setLoading(true);
       await axiosInstance.patch(`/organization/${orgId}`, {
@@ -62,11 +67,27 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
     }
   };
 
+  const isDark = theme === "dark";
+
   return (
     <Drawer open={open} onOpenChange={onClose}>
-      <DrawerContent className="bg-white rounded-t-2xl shadow-lg border-t border-blue-100 [&>div:first-child]:bg-blue-400">
-        <DrawerHeader className="border-b border-blue-100 pb-3 bg-blue-50">
-          <DrawerTitle className="text-blue-700 font-semibold text-lg">
+      <DrawerContent
+        className={`rounded-t-2xl shadow-lg border-t transition-colors duration-300 ${
+          isDark
+            ? "bg-[#101922] border-gray-800 text-gray-300"
+            : "bg-white border-blue-100 text-gray-800"
+        }`}
+      >
+        <DrawerHeader
+          className={`border-b pb-3 mt-2 ${
+            isDark ? "border-gray-700 bg-[#1E293B]" : "border-blue-100 bg-blue-50"
+          }`}
+        >
+          <DrawerTitle
+            className={`font-semibold text-lg ${
+              isDark ? "text-blue-400" : "text-blue-700"
+            }`}
+          >
             ✏️ Edit Organization
           </DrawerTitle>
         </DrawerHeader>
@@ -75,7 +96,9 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
           <div>
             <Label
               htmlFor="name"
-              className="text-sm font-medium text-gray-700"
+              className={`text-sm font-medium ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               Organization Name
             </Label>
@@ -84,14 +107,19 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter organization name"
-              className="mt-1 border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                isDark
+                  ? "bg-[#1E293B] border-gray-700 text-gray-200 placeholder-gray-400"
+                  : "border-blue-300"
+              }`}
             />
           </div>
-
           <div>
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className={`text-sm font-medium ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               Password
             </Label>
@@ -101,16 +129,27 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
-              className="mt-1 border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                isDark
+                  ? "bg-[#1E293B] border-gray-700 text-gray-200 placeholder-gray-400"
+                  : "border-blue-300"
+              }`}
             />
           </div>
         </div>
-
-        <DrawerFooter className="flex justify-end gap-2 border-t border-blue-100 bg-blue-50 px-5 py-3 rounded-b-2xl">
+        <DrawerFooter
+          className={`flex justify-end gap-2 border-t px-5 py-3 rounded-b-2xl ${
+            isDark ? "border-gray-700 bg-[#1E293B]" : "border-blue-100 bg-blue-50"
+          }`}
+        >
           <DrawerClose asChild>
             <Button
               variant="outline"
-              className="border-blue-500 text-blue-600 hover:bg-blue-100 bg-blue-50 hover:text-blue-700"
+              className={`transition-all ${
+                isDark
+                  ? "border-gray-600 text-gray-300 hover:bg-gray-700"
+                  : "border-blue-500 text-blue-600 hover:bg-blue-100 bg-blue-50"
+              }`}
             >
               Cancel
             </Button>
@@ -118,7 +157,11 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
           <Button
             onClick={handleUpdate}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className={`transition-all ${
+              isDark
+                ? "bg-blue-700 hover:bg-blue-800 text-white"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
           >
             {loading ? "Saving..." : "Save Changes"}
           </Button>

@@ -29,10 +29,10 @@ type Application = {
 };
 
 const tabs: StatusKey[] = [
-  "not_completed",
   "pending",
-  "sent_to_organ",
   "completed",
+  "not_completed",
+  "sent_to_organ",
   "review",
   "accepted",
   "admin_approval",
@@ -41,7 +41,7 @@ const tabs: StatusKey[] = [
 ];
 
 export default function Applications() {
-  const [activeTab, setActiveTab] = useState<StatusKey>("not_completed");
+  const [activeTab, setActiveTab] = useState<StatusKey>("pending");
   const [search, setSearch] = useState("");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export default function Applications() {
 
       const transformedApps: Application[] = response.data.items.map(
         (item: any) => ({
-          id: item.id, // ❗ faqat raqamni saqlaymiz
+          id: item.id,
           name: item.full_name,
           phone: item.phone || "N/A",
           organization: item.organization || "N/A",
@@ -89,12 +89,14 @@ export default function Applications() {
   );
 
   return (
-    <div className="p-6">
-      {/* Header */}
+    <div
+      className="p-6 min-h-screen transition-colors"
+      style={{ backgroundColor: "#101922", color: "#E4E9F2" }}
+    >
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Applications</h1>
-          <p className="text-gray-500 text-sm">
+          <h1 className="text-2xl font-semibold">Applications</h1>
+          <p className="text-gray-400 text-sm">
             Manage and track all applications.
           </p>
         </div>
@@ -106,16 +108,15 @@ export default function Applications() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="
-              w-full rounded-xl border border-gray-200 pl-10 pr-4 py-2.5
-              text-sm text-gray-700 shadow-sm bg-white placeholder:text-gray-400
+              w-full rounded-xl border border-[#2B3648] 
+              pl-10 pr-4 py-2.5 text-sm text-[#E4E9F2]
+              shadow-sm bg-[#1A2433] placeholder:text-gray-500
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-              transition-all duration-200 hover:border-gray-300
+              transition-all duration-200 hover:border-blue-400
             "
           />
         </div>
       </div>
-
-      {/* Tabs */}
       <div className="relative border-none pb-2 mb-4 overflow-x-auto">
         <div className="flex gap-6 relative">
           {tabs.map((tab) => (
@@ -124,28 +125,29 @@ export default function Applications() {
               onClick={() => setActiveTab(tab)}
               className={`relative pb-2 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? "text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-blue-400"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               {STATUS_DISPLAY_MAP[tab]}
               {activeTab === tab && (
                 <motion.div
                   layoutId="underline"
-                  className="absolute left-0 right-0 bottom-0 h-[2px] bg-blue-600 rounded-full z-10"
+                  className="absolute left-0 right-0 bottom-0 h-[2px] bg-blue-500 rounded-full z-10"
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 />
               )}
             </button>
           ))}
         </div>
-        <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-gray-200 z-0" />
+        <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-[#2B3648] z-0" />
       </div>
-
-      {/* Table */}
-      <div className="overflow-x-auto border rounded-lg">
+      <div
+        className="overflow-x-auto border rounded-lg"
+        style={{ borderColor: "#2B3648" }}
+      >
         <table className="min-w-full text-left text-sm border-separate border-spacing-y-2">
-          <thead className="bg-gray-100 text-gray-700 rounded-lg">
+          <thead style={{ backgroundColor: "#1A2433", color: "#E4E9F2" }}>
             <tr>
               <th className="px-4 py-3 font-semibold">Application ID</th>
               <th className="px-4 py-3 font-semibold">Applicant Name</th>
@@ -157,13 +159,13 @@ export default function Applications() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="text-center py-4">
+                <td colSpan={5} className="text-center py-4 text-gray-400">
                   Loading applications...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={5} className="text-center py-4 text-red-500">
+                <td colSpan={5} className="text-center py-4 text-red-400">
                   {error}
                 </td>
               </tr>
@@ -171,40 +173,37 @@ export default function Applications() {
               filtered.map((app) => (
                 <tr
                   key={app.id}
-                  onClick={() => navigate(`/applications/info/${app.id}`)} // ✅ TO‘G‘RI format
-                  className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200 rounded-lg cursor-pointer"
+                  onClick={() => navigate(`/applications/info/${app.id}`)}
+                  className="cursor-pointer transition-colors duration-200 hover:bg-[#1F2A3A]"
+                  style={{
+                    backgroundColor: "#1A2433",
+                    borderRadius: "10px",
+                  }}
                 >
-                  <td className="px-4 py-3 font-medium text-blue-600 rounded-l-lg border-l border-gray-100">
+                  <td className="px-4 py-3 font-medium text-blue-400 rounded-l-lg">
                     APP-{app.id}
                   </td>
                   <td className="px-4 py-3">{app.name}</td>
-                  <td className="px-4 py-3">{app.phone}</td>
+                  <td className="px-4 py-3 text-gray-300">{app.phone}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`${
-                        app.status === "Not Completed"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : app.status === "Pending"
-                          ? "bg-blue-100 text-blue-800"
-                          : app.status === "Sent to Organ"
-                          ? "bg-purple-100 text-purple-800"
-                          : app.status === "Completed"
-                          ? "bg-green-100 text-green-800"
-                          : app.status === "Review"
-                          ? "bg-orange-100 text-orange-800"
-                          : app.status === "Accepted"
-                          ? "bg-green-100 text-green-800"
-                          : app.status === "Admin Approval"
-                          ? "bg-indigo-100 text-indigo-800"
-                          : app.status === "Returned to Organ"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      } text-xs font-semibold px-3 py-1 rounded-full`}
+                      className={`text-xs font-semibold px-3 py-1 rounded-full`}
+                      style={{
+                        backgroundColor:
+                          app.status === "Completed"
+                            ? "#0F5132"
+                            : app.status === "Pending"
+                            ? "#1E3A8A"
+                            : app.status === "Returned to Organ"
+                            ? "#58151C"
+                            : "#2B3648",
+                        color: "#E4E9F2",
+                      }}
                     >
                       {app.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600 rounded-r-lg border-r border-gray-100">
+                  <td className="px-4 py-3 text-gray-400 rounded-r-lg">
                     {app.date}
                   </td>
                 </tr>

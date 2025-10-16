@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { axiosInstance } from "@/api/api";
+import SendToOrgan from "./SentToOrgan";
 import {
   ArrowLeft,
-  Upload,
   FileText,
   Calendar,
   User,
@@ -11,23 +11,29 @@ import {
   File,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
+import { init } from "i18next";
 
 const ApplicationInformation = () => {
   const { id } = useParams();
   const [application, setApplication] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [text, setText] = useState("");
-  const [days, setDays] = useState<number | undefined>(0);
-  const [status, setStatus] = useState("not_completed");
-  const [orgName, setOrgName] = useState("");
-  const [orgId, setOrgId] = useState<number | null>(null);
-  const [orgSuggestions, setOrgSuggestions] = useState<
-    { id: number; name: string }[]
-  >([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [_orgName, setOrgName] = useState("");
+  const [_orgId, setOrgId] = useState<number | null>(null);
+
+  const [theme, _setTheme] = useState<"light" | "dark">(() => {
+    const stored = localStorage.getItem("theme");
+    return stored === "dark" ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const fetchApplicationDetails = async () => {
     try {
@@ -44,51 +50,6 @@ const ApplicationInformation = () => {
       setError("Failed to load application details.");
     }
   };
-  const fetchOrganizations = async (query: string) => {
-    if (!query.trim()) {
-      setOrgSuggestions([]);
-      return;
-    }
-
-    try {
-      const res = await axiosInstance.get(
-        `/admin/send_organ/get_orgs?org_name=${query}`
-      );
-      if (Array.isArray(res.data)) {
-        setOrgSuggestions(res.data);
-      } else {
-        setOrgSuggestions([]);
-      }
-    } catch (error) {
-      console.error("Error fetching organizations:", error);
-      setOrgSuggestions([]);
-    }
-  };
-
-  const handleSendOrgan = async () => {
-    if (!application) return;
-    try {
-      setLoading(true);
-      await axiosInstance.post("/admin/send_organ", {
-        application_id: application.application_id,
-        org_id: Number(orgId),
-        text,
-        status,
-        days: Number(days),
-      });
-      toast.success("Application sent successfully!");
-      setText("");
-      setOrgId(null);
-      setDays(undefined);
-      fetchApplicationDetails();
-      window.history.back();
-    } catch (err) {
-      console.error("Error sending application:", err);
-      toast.error("Failed to send application!");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const isImageFile = (fileName: string) => {
     const imageExtensions = [
@@ -102,6 +63,7 @@ const ApplicationInformation = () => {
     ];
     return imageExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
   };
+
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
@@ -121,10 +83,10 @@ const ApplicationInformation = () => {
       return (
         <div className="relative group">
           <div
-            className="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+            className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750 transition"
             onClick={() => setSelectedImage(fileUrl)}
           >
-            <Image size={24} className="text-gray-400" />
+            <Image size={24} className="text-gray-400 dark:text-gray-500" />
           </div>
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition" />
           <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
@@ -136,8 +98,8 @@ const ApplicationInformation = () => {
       );
     } else {
       return (
-        <div className="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-          <File size={24} className="text-gray-400" />
+        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+          <File size={24} className="text-gray-400 dark:text-gray-500" />
         </div>
       );
     }
@@ -160,19 +122,22 @@ const ApplicationInformation = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: any = {
-      not_completed: {
-        color: "bg-yellow-100 text-yellow-800",
-        label: "Not Completed",
-      },
-      pending: { color: "bg-blue-100 text-blue-800", label: "Pending" },
-      completed: { color: "bg-green-100 text-green-800", label: "Completed" },
+    const map: any = {
+      not_completed:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+      pending: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      completed:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     };
-
-    const config = statusConfig[status] || statusConfig["not_completed"];
+    const label =
+      status === "completed"
+        ? "Completed"
+        : status === "pending"
+        ? "Pending"
+        : "Not Completed";
     return (
-      <span className={`px-2 py-1 ${config.color} text-xs font-medium rounded`}>
-        {config.label}
+      <span className={`px-2 py-1 text-xs font-medium rounded ${map[status]}`}>
+        {label}
       </span>
     );
   };
@@ -180,7 +145,7 @@ const ApplicationInformation = () => {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 p-4 rounded-lg">
           {error}
         </div>
       </div>
@@ -190,37 +155,37 @@ const ApplicationInformation = () => {
   if (!application) {
     return (
       <div className="p-6">
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-lg">
-          Application not found.
+        <div className="bg-yellow-50 text-center dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-400 p-4 rounded-lg">
+          Loading...
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#101922] text-gray-900 dark:text-gray-100 p-6 transition-colors">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               Application Details
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
               APP-{application.application_id} - {application.full_name}
             </p>
           </div>
           <button
             onClick={() => window.history.back()}
-            className="px-4 py-2 bg-white text-gray-700 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center gap-2 transition"
+            className="px-4 py-2 bg-white dark:bg-[#1a2533] text-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1e2a38] flex items-center gap-2 transition"
           >
             <ArrowLeft size={16} /> Back to list
           </button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+              <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   <User size={18} />
                   Applicant Information
                 </h2>
@@ -228,139 +193,149 @@ const ApplicationInformation = () => {
               <div className="p-5">
                 <table className="w-full border-collapse">
                   <tbody>
-                    <tr className="border-b border-gray-100">
-                      <td className="py-3 px-2 font-medium text-gray-600 w-1/3">
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400 w-1/3">
                         Full Name
                       </td>
-                      <td className="py-3 px-2 text-gray-800">
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.full_name}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-100">
-                      <td className="py-3 px-2 font-medium text-gray-600">
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
                         Phone
                       </td>
-                      <td className="py-3 px-2 text-gray-800">
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.phone}
                       </td>
                     </tr>
                     {application.additional_phone && (
-                      <tr className="border-b border-gray-100">
-                        <td className="py-3 px-2 font-medium text-gray-600">
+                      <tr className="border-b border-gray-100 dark:border-gray-700">
+                        <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
                           Additional Phone
                         </td>
-                        <td className="py-3 px-2 text-gray-800">
+                        <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                           {application.additional_phone || "—"}
                         </td>
                       </tr>
                     )}
                     {application.organization_name && (
-                      <tr className="border-b border-gray-100">
-                      <td className="py-3 px-2 font-medium text-gray-600">
-                        Organization
-                      </td>
-                      <td className="py-3 px-2 text-gray-800 flex items-center gap-1">
-                        <Building size={14} />
-                        {application.organization_name || "—"}
-                      </td>
-                    </tr>
+                      <tr className="border-b border-gray-100 dark:border-gray-700">
+                        <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
+                          Organization
+                        </td>
+                        <td className="py-3 px-2 text-gray-800 dark:text-gray-100 flex items-center gap-1">
+                          <Building size={14} />
+                          {application.organization_name || "—"}
+                        </td>
+                      </tr>
                     )}
-                    
-                    <tr className="border-b border-gray-100">
-                      <td className="py-3 px-2 font-medium text-gray-600">
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
                         Quarter
                       </td>
-                      <td className="py-3 px-2 text-gray-800">
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.quarter_name || "—"}
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-2 font-medium text-gray-600">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
                         Created Date
                       </td>
-                      <td className="py-3 px-2 text-gray-800 flex items-center gap-1">
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100 flex items-center gap-1">
                         <Calendar size={14} />
                         {formatDateTime(application.creat_at)}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4 items-center">
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 items-center">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-600">Status:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-400">
+                      Status:
+                    </span>
                     {getStatusBadge(application.application_status)}
                   </div>
-                  {/* Yuklab olish tugmalari */}
-<div className="flex gap-3 pt-4">
-  <button
-    onClick={async () => {
-      const lang = localStorage.getItem("lang") || "uz";
-      const url = `https://f2f2a56a78e0.ngrok-free.app/admin/${application.id}/export-word?lang=${lang}`;
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={async () => {
+                        const lang = localStorage.getItem("lang") || "uz";
+                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/${application.id}/export-word?lang=${lang}`;
 
-      const response = await fetch(url, {
-        headers: { "ngrok-skip-browser-warning": "true" },
-      });
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get("content-disposition");
-      const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/);
-      const filename = filenameMatch ? filenameMatch[1] : "application.docx";
+                        const response = await fetch(url, {
+                          headers: { "ngrok-skip-browser-warning": "true" },
+                        });
+                        const blob = await response.blob();
+                        const contentDisposition = response.headers.get(
+                          "content-disposition"
+                        );
+                        const filenameMatch =
+                          contentDisposition?.match(/filename="?([^"]+)"?/);
+                        const filename = filenameMatch
+                          ? filenameMatch[1]
+                          : "application.docx";
 
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-  >
-    Word yuklab olish
-  </button>
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                    >
+                      Word yuklab olish
+                    </button>
+                    <button
+                      onClick={async () => {
+                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/files/pdf-no-org?app_id=${application.id}`;
 
-  <button
-    onClick={async () => {
-      const url = `https://f2f2a56a78e0.ngrok-free.app/admin/files/pdf-no-org?app_id=${application.id}`;
+                        const response = await fetch(url, {
+                          headers: { "ngrok-skip-browser-warning": "true" },
+                        });
+                        const blob = await response.blob();
+                        const contentDisposition = response.headers.get(
+                          "content-disposition"
+                        );
+                        const filenameMatch =
+                          contentDisposition?.match(/filename="?([^"]+)"?/);
+                        const filename = filenameMatch
+                          ? filenameMatch[1]
+                          : "application.pdf";
 
-      const response = await fetch(url, {
-        headers: { "ngrok-skip-browser-warning": "true" },
-      });
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get("content-disposition");
-      const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/);
-      const filename = filenameMatch ? filenameMatch[1] : "application.pdf";
-
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }}
-    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
-  >
-    PDF yuklab olish
-  </button>
-</div>
-
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                    >
+                      PDF yuklab olish
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800">History</h2>
+            <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+              <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                  History
+                </h2>
               </div>
               <div className="p-5">
                 <div className="space-y-4">
                   <div className="flex">
                     <div className="flex flex-col items-center mr-4">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <div className="w-0.5 h-full bg-gray-200 mt-1"></div>
+                      <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 mt-1"></div>
                     </div>
                     <div className="pb-4">
-                      <p className="font-medium text-gray-800">
+                      <p className="font-medium text-gray-800 dark:text-gray-100">
                         Application Created
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDateTime(application.creat_at)}
                       </p>
                     </div>
@@ -369,13 +344,13 @@ const ApplicationInformation = () => {
                     <div className="flex">
                       <div className="flex flex-col items-center mr-4">
                         <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <div className="w-0.5 h-full bg-gray-200 mt-1"></div>
+                        <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 mt-1"></div>
                       </div>
                       <div className="pb-4">
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-gray-800 dark:text-gray-100">
                           Sent to Organ
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {formatDateTime(application.sent_time)}
                         </p>
                       </div>
@@ -385,11 +360,13 @@ const ApplicationInformation = () => {
                     <div className="flex">
                       <div className="flex flex-col items-center mr-4">
                         <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <div className="w-0.5 h-full bg-gray-200 mt-1"></div>
+                        <div className="w-0.5 h-full bg-gray-200 dark:bg-gray-700 mt-1"></div>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">Deadline</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="font-medium text-gray-800 dark:text-gray-100">
+                          Deadline
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {formatDateTime(application.deadline_time)}
                         </p>
                       </div>
@@ -398,50 +375,48 @@ const ApplicationInformation = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800">
+            <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+              <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   Text Information
                 </h2>
               </div>
               <div className="p-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     User Text
                   </label>
-                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 min-h-[60px]">
-                    <p className="text-gray-700 whitespace-pre-line break-words">
+                  <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
                       {application.user_text || "No user text provided"}
                     </p>
                   </div>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Admin Text
                   </label>
-                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 min-h-[60px]">
-                    <p className="text-gray-700 whitespace-pre-line break-words">
+                  <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
                       {application.text || "No admin text provided"}
                     </p>
                   </div>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Organ Text
                   </label>
-                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 min-h-[60px]">
-                    <p className="text-gray-700 whitespace-pre-line break-words">
+                  <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
                       {application.organ_text || "No organ text provided"}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-              <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+              <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   <FileText size={18} />
                   Attachments
                 </h2>
@@ -449,33 +424,35 @@ const ApplicationInformation = () => {
               <div className="p-5">
                 <div className="space-y-4">
                   {application.file_url && (
-                    <div className="flex gap-4 p-3 border border-gray-200 rounded-lg">
+                    <div className="flex gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                       {getFileIcon("file_url", application.file_url)}
                       <div className="flex-1 flex flex-col justify-center">
-                        <p className="font-medium text-gray-800">Main File</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="font-medium text-gray-800 dark:text-gray-100">
+                          Main File
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           Fuqaro tomonidan asosiy yuklangan fayl
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setSelectedImage(application.file_url)}
-                          className="px-3 py-1 bg-green-50 text-green-600 text-sm font-medium rounded hover:bg-green-100 transition flex items-center gap-1"
+                          className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko‘rish
+                          Ko'rish
                         </button>
                       </div>
                     </div>
                   )}
                   {application.citizen_file && (
-                    <div className="flex gap-4 p-3 border border-gray-200 rounded-lg">
+                    <div className="flex gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                       {getFileIcon("citizen_file", application.citizen_file)}
                       <div className="flex-1 flex flex-col justify-center">
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-gray-800 dark:text-gray-100">
                           Citizen File
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           Fuqaro tomonidan yuklangan fayl
                         </p>
                       </div>
@@ -484,26 +461,26 @@ const ApplicationInformation = () => {
                           onClick={() =>
                             setSelectedImage(application.citizen_file)
                           }
-                          className="px-3 py-1 bg-green-50 text-green-600 text-sm font-medium rounded hover:bg-green-100 transition flex items-center gap-1"
+                          className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko‘rish
+                          Ko'rish
                         </button>
                       </div>
                     </div>
                   )}
                   {application.admin_extra_file && (
-                    <div className="flex gap-4 p-3 border border-gray-200 rounded-lg">
+                    <div className="flex gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                       {getFileIcon(
                         "admin_extra_file",
                         application.admin_extra_file
                       )}
                       <div className="flex-1 flex flex-col justify-center">
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-gray-800 dark:text-gray-100">
                           Admin Extra File
                         </p>
-                        <p className="text-sm text-gray-500">
-                          Admin tomonidan qo‘shimcha fayl
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Admin tomonidan qo'shimcha fayl
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -511,10 +488,10 @@ const ApplicationInformation = () => {
                           onClick={() =>
                             setSelectedImage(application.admin_extra_file)
                           }
-                          className="px-3 py-1 bg-green-50 text-green-600 text-sm font-medium rounded hover:bg-green-100 transition flex items-center gap-1"
+                          className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko‘rish
+                          Ko'rish
                         </button>
                       </div>
                     </div>
@@ -525,31 +502,31 @@ const ApplicationInformation = () => {
                       (photo: string, index: number) => (
                         <div
                           key={index}
-                          className="flex gap-4 p-3 border border-gray-200 rounded-lg"
+                          className="flex gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
                         >
                           {getFileIcon(`photo_${index}`, photo)}
                           <div className="flex-1 flex flex-col justify-center">
-                            <p className="font-medium text-gray-800">
+                            <p className="font-medium text-gray-800 dark:text-gray-100">
                               Admin Photo {index + 1}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                               Admin tomonidan yuklangan rasm
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setSelectedImage(photo)}
-                              className="px-3 py-1 bg-green-50 text-green-600 text-sm font-medium rounded hover:bg-green-100 transition flex items-center gap-1"
+                              className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                             >
                               <Image size={14} />
-                              Ko‘rish
+                              Ko'rish
                             </button>
                           </div>
                         </div>
                       )
                     )
                   ) : (
-                    <div className="text-center py-4 text-gray-500">
+                    <div className="text-center py-4 text-gray-500 dark:text-gray-400">
                       No attachments available
                     </div>
                   )}
@@ -557,119 +534,19 @@ const ApplicationInformation = () => {
               </div>
             </div>
           </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden h-fit">
-            <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-800">
-                Send to Organ
-              </h2>
-            </div>
-            <div className="p-5 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Message Text
-                </label>
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Write message to organ..."
-                  className="w-full border border-gray-300 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Days
-                  </label>
-                  <input
-                    type="text"
-                    value={days || ""}
-                    onChange={(e) => setDays(Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  >
-                    <option value="not_completed">Not Completed</option>
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </div>
-                <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Organization
-                  </label>
-                  <input
-                    type="text"
-                    value={orgName}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setOrgName(value);
-                      setShowSuggestions(true);
-                      fetchOrganizations(value);
-                    }}
-                    onBlur={() =>
-                      setTimeout(() => setShowSuggestions(false), 200)
-                    }
-                    placeholder="Enter organization name..."
-                    className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  />
-
-                  {showSuggestions && orgSuggestions.length > 0 && (
-                    <ul className="absolute z-50 bg-white border border-gray-200 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
-                      {orgSuggestions.map((org) => (
-                        <li
-                          key={org.id}
-                          onClick={() => {
-                            setOrgName(org.name);
-                            setOrgId(org.id);
-                            setShowSuggestions(false);
-                          }}
-                          className="px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer transition"
-                        >
-                          {org.name}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={handleSendOrgan}
-                disabled={loading}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2 transition disabled:opacity-70 disabled:cursor-not-allowed mt-2"
-              >
-                <Upload size={16} />
-                {loading ? "Sending..." : "Send to Organ"}
-              </button>
-              {application.organ_text && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h3 className="font-medium text-gray-700 mb-2">
-                    Current Organ Information
-                  </h3>
-                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <p className="text-sm text-gray-600 mb-1">
-                      <span className="font-medium">Organ Text:</span>{" "}
-                      {application.organ_text}
-                    </p>
-                    {application.organ_deadline_time && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Organ Deadline:</span>{" "}
-                        {formatDateTime(application.organ_deadline_time)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {![
+            "completed",
+            "not_completed",
+            "accepted",
+            "returned_to_organ",
+            "expired_closed",
+          ].includes(application.application_status) && (
+            <SendToOrgan
+              application={application}
+              initialStatus={application.application_status}
+              onSendSuccess={fetchApplicationDetails}
+            />
+          )}
         </div>
       </div>
       {selectedImage && (
@@ -678,7 +555,7 @@ const ApplicationInformation = () => {
           onClick={() => setSelectedImage(null)}
         >
           <div
-            className="relative bg-white rounded-2xl overflow-hidden shadow-2xl max-w-6xl w-[95vw] md:w-[80vw] max-h-[90vh] flex flex-col items-center animate-scaleIn"
+            className="relative bg-white dark:bg-[#1a2533] rounded-2xl overflow-hidden shadow-2xl max-w-6xl w-[95vw] md:w-[80vw] max-h-[90vh] flex flex-col items-center animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
             {/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(selectedImage || "") ? (
