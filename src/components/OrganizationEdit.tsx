@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface EditOrganizationDrawerProps {
   open: boolean;
@@ -28,6 +29,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
   currentName,
   onUpdated,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
 
   const handleUpdate = async () => {
     if (!name.trim() || !password.trim()) {
-      toast.warning("Please fill in all fields");
+      toast.warning(t("fillAllFields"));
       return;
     }
     try {
@@ -56,12 +58,12 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
         new_name: name,
         new_password: password,
       });
-      toast.success("Organization updated successfully!");
+      toast.success(t("updateSuccess"));
       onUpdated();
       onClose();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update organization");
+      toast.error(t("updateError"));
     } finally {
       setLoading(false);
     }
@@ -80,7 +82,9 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
       >
         <DrawerHeader
           className={`border-b pb-3 mt-2 ${
-            isDark ? "border-gray-700 bg-[#1E293B]" : "border-blue-100 bg-blue-50"
+            isDark
+              ? "border-gray-700 bg-[#1E293B]"
+              : "border-blue-100 bg-blue-50"
           }`}
         >
           <DrawerTitle
@@ -88,7 +92,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
               isDark ? "text-blue-400" : "text-blue-700"
             }`}
           >
-            ✏️ Edit Organization
+            ✏️ {t("editOrganization")}
           </DrawerTitle>
         </DrawerHeader>
 
@@ -100,13 +104,13 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Organization Name
+              {t("organizationName")}
             </Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter organization name"
+              placeholder={t("enterOrganizationName")}
               className={`mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 isDark
                   ? "bg-[#1E293B] border-gray-700 text-gray-200 placeholder-gray-400"
@@ -121,14 +125,14 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Password
+              {t("password")}
             </Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
+              placeholder={t("enterPassword")}
               className={`mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 isDark
                   ? "bg-[#1E293B] border-gray-700 text-gray-200 placeholder-gray-400"
@@ -139,7 +143,9 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
         </div>
         <DrawerFooter
           className={`flex justify-end gap-2 border-t px-5 py-3 rounded-b-2xl ${
-            isDark ? "border-gray-700 bg-[#1E293B]" : "border-blue-100 bg-blue-50"
+            isDark
+              ? "border-gray-700 bg-[#1E293B]"
+              : "border-blue-100 bg-blue-50"
           }`}
         >
           <DrawerClose asChild>
@@ -151,7 +157,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
                   : "border-blue-500 text-blue-600 hover:bg-blue-100 bg-blue-50"
               }`}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </DrawerClose>
           <Button
@@ -163,7 +169,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
                 : "bg-blue-600 hover:bg-blue-700 text-white"
             }`}
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? t("saving") : t("saveChanges")}
           </Button>
         </DrawerFooter>
       </DrawerContent>

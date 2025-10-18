@@ -3,6 +3,7 @@ import { axiosInstance } from "../api/api";
 import AddOrganizationDrawer from "./AddOrganization";
 import EditOrganizationDrawer from "./OrganizationEdit";
 import DeleteOrganizationDrawer from "./OrganizationDelete";
+import { useTranslation } from "react-i18next";
 
 interface Organization {
   id: number;
@@ -11,14 +12,18 @@ interface Organization {
 }
 
 const OrganizationsTable: React.FC = () => {
+  const { t } = useTranslation();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<any>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<{ id: number; name: string } | null>(null);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [selectedOrg, setSelectedOrg] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+  const [theme, _setTheme] = useState(localStorage.getItem("theme") || "light");
 
   const fetchOrganizations = () => {
     axiosInstance
@@ -51,19 +56,21 @@ const OrganizationsTable: React.FC = () => {
       }`}
     >
       <div className="flex justify-between items-center pb-3">
-        <h1 className="text-2xl font-bold">
-          Organizations
-        </h1>
+        <h1 className="text-2xl font-bold">{t("organizations")}</h1>
         <div className="flex items-center gap-4">
           <button
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md"
             onClick={() => setDrawerOpen(true)}
           >
-            <span className="text-lg font-bold">+</span> Add Organization
+            <span className="text-lg font-bold">+</span> {t("addOrganization")}
           </button>
         </div>
       </div>
-      <hr className={theme === "dark" ? "border-gray-700 my-4" : "border-gray-300 my-4"} />
+      <hr
+        className={
+          theme === "dark" ? "border-gray-700 my-4" : "border-gray-300 my-4"
+        }
+      />
       <div
         className={`rounded-xl shadow-lg overflow-hidden mt-6 border transition-colors ${
           theme === "dark"
@@ -80,19 +87,21 @@ const OrganizationsTable: React.FC = () => {
                   : "bg-gray-100 text-gray-600"
               }`}
             >
-              <th className="py-3 px-4">Name</th>
-              {/* <th className="py-3 px-4">Created At</th> */}
-              <th className="py-3 px-6">Actions</th>
+              <th className="py-3 px-4">{t("name")}</th>
+              {/* <th className="py-3 px-4">{t("createdAt")}</th> */}
+              <th className="py-3 px-6">{t("actions")}</th>
             </tr>
           </thead>
-          <tbody className={theme === "dark" ? "divide-gray-800" : "divide-gray-200 divide-y"}>
+          <tbody
+            className={
+              theme === "dark" ? "divide-gray-800" : "divide-gray-200 divide-y"
+            }
+          >
             {organizations.map((org) => (
               <tr
                 key={org.id}
                 className={`transition-colors flex justify-between px-8 border-b-2 ${
-                  theme === "dark"
-                    ? "hover:bg-[#223044]"
-                    : "hover:bg-gray-50"
+                  theme === "dark" ? "hover:bg-[#223044]" : "hover:bg-gray-50"
                 }`}
               >
                 <td className="py-3 px-4 font-medium">{org.name}</td>
@@ -110,7 +119,7 @@ const OrganizationsTable: React.FC = () => {
                         setDeleteOpen(true);
                       }}
                     >
-                      Delete
+                      {t("delete")}
                     </button>
                     <span>|</span>
                     <button
@@ -124,7 +133,7 @@ const OrganizationsTable: React.FC = () => {
                         setEditOpen(true);
                       }}
                     >
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                 </td>
@@ -132,8 +141,11 @@ const OrganizationsTable: React.FC = () => {
             ))}
             {organizations.length === 0 && (
               <tr>
-                <td colSpan={3} className="text-center py-6 italic text-gray-500">
-                  No organizations found
+                <td
+                  colSpan={3}
+                  className="text-center py-6 italic text-gray-500"
+                >
+                  {t("noOrganizations")}
                 </td>
               </tr>
             )}
@@ -151,9 +163,14 @@ const OrganizationsTable: React.FC = () => {
             disabled={page <= 1}
             onClick={() => setPage((prev) => prev - 1)}
           >
-            Previous
+            {t("previous")}
           </button>
-          <span>{`Page ${pagination.current_page} of ${pagination.total_pages}`}</span>
+          <span>
+            {t("pageInfo", {
+              current: pagination.current_page,
+              total: pagination.total_pages,
+            })}
+          </span>
           <button
             className={`px-4 py-2 rounded-md disabled:opacity-50 ${
               theme === "dark"
@@ -163,7 +180,7 @@ const OrganizationsTable: React.FC = () => {
             disabled={page >= pagination.total_pages}
             onClick={() => setPage((prev) => prev + 1)}
           >
-            Next
+            {t("next")}
           </button>
         </div>
       )}

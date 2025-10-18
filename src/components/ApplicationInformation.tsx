@@ -11,16 +11,16 @@ import {
   File,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { init } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const ApplicationInformation = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [application, setApplication] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [_orgName, setOrgName] = useState("");
   const [_orgId, setOrgId] = useState<number | null>(null);
-
   const [theme, _setTheme] = useState<"light" | "dark">(() => {
     const stored = localStorage.getItem("theme");
     return stored === "dark" ? "dark" : "light";
@@ -47,7 +47,7 @@ const ApplicationInformation = () => {
       }
     } catch (err) {
       console.error("Error fetching application details:", err);
-      setError("Failed to load application details.");
+      setError(t("loadError"));
     }
   };
 
@@ -91,7 +91,7 @@ const ApplicationInformation = () => {
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition" />
           <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
             <div className="bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
-              Ko'rish
+              {t("view")}
             </div>
           </div>
         </div>
@@ -129,12 +129,7 @@ const ApplicationInformation = () => {
       completed:
         "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     };
-    const label =
-      status === "completed"
-        ? "Completed"
-        : status === "pending"
-        ? "Pending"
-        : "Not Completed";
+    const label = t(status);
     return (
       <span className={`px-2 py-1 text-xs font-medium rounded ${map[status]}`}>
         {label}
@@ -156,7 +151,7 @@ const ApplicationInformation = () => {
     return (
       <div className="p-6">
         <div className="bg-yellow-50 text-center dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-400 p-4 rounded-lg">
-          Loading...
+          {t("loading")}
         </div>
       </div>
     );
@@ -168,7 +163,7 @@ const ApplicationInformation = () => {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              Application Details
+              {t("applicationDetails")}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
               APP-{application.application_id} - {application.full_name}
@@ -178,7 +173,7 @@ const ApplicationInformation = () => {
             onClick={() => window.history.back()}
             className="px-4 py-2 bg-white dark:bg-[#1a2533] text-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1e2a38] flex items-center gap-2 transition"
           >
-            <ArrowLeft size={16} /> Back to list
+            <ArrowLeft size={16} /> {t("backToList")}
           </button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -187,7 +182,7 @@ const ApplicationInformation = () => {
               <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   <User size={18} />
-                  Applicant Information
+                  {t("applicantInformation")}
                 </h2>
               </div>
               <div className="p-5">
@@ -195,7 +190,7 @@ const ApplicationInformation = () => {
                   <tbody>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400 w-1/3">
-                        Full Name
+                        {t("fullName")}
                       </td>
                       <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.full_name}
@@ -203,7 +198,7 @@ const ApplicationInformation = () => {
                     </tr>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
-                        Phone
+                        {t("phone")}
                       </td>
                       <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.phone}
@@ -212,7 +207,7 @@ const ApplicationInformation = () => {
                     {application.additional_phone && (
                       <tr className="border-b border-gray-100 dark:border-gray-700">
                         <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
-                          Additional Phone
+                          {t("additionalPhone")}
                         </td>
                         <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                           {application.additional_phone || "—"}
@@ -222,7 +217,7 @@ const ApplicationInformation = () => {
                     {application.organization_name && (
                       <tr className="border-b border-gray-100 dark:border-gray-700">
                         <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
-                          Organization
+                          {t("organization")}
                         </td>
                         <td className="py-3 px-2 text-gray-800 dark:text-gray-100 flex items-center gap-1">
                           <Building size={14} />
@@ -232,7 +227,7 @@ const ApplicationInformation = () => {
                     )}
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
-                        Quarter
+                        {t("quarter")}
                       </td>
                       <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
                         {application.quarter_name || "—"}
@@ -240,7 +235,7 @@ const ApplicationInformation = () => {
                     </tr>
                     <tr>
                       <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
-                        Created Date
+                        {t("createdAt")}
                       </td>
                       <td className="py-3 px-2 text-gray-800 dark:text-gray-100 flex items-center gap-1">
                         <Calendar size={14} />
@@ -252,7 +247,7 @@ const ApplicationInformation = () => {
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 items-center">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Status:
+                      {t("status")}:
                     </span>
                     {getStatusBadge(application.application_status)}
                   </div>
@@ -284,7 +279,7 @@ const ApplicationInformation = () => {
                       }}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
                     >
-                      Word yuklab olish
+                      {t("downloadWord")}
                     </button>
                     <button
                       onClick={async () => {
@@ -312,7 +307,7 @@ const ApplicationInformation = () => {
                       }}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
                     >
-                      PDF yuklab olish
+                      {t("downloadPDF")}
                     </button>
                   </div>
                 </div>
@@ -321,7 +316,7 @@ const ApplicationInformation = () => {
             <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
               <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  History
+                  {t("history")}
                 </h2>
               </div>
               <div className="p-5">
@@ -333,7 +328,7 @@ const ApplicationInformation = () => {
                     </div>
                     <div className="pb-4">
                       <p className="font-medium text-gray-800 dark:text-gray-100">
-                        Application Created
+                        {t("applicationCreated")}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDateTime(application.creat_at)}
@@ -348,7 +343,7 @@ const ApplicationInformation = () => {
                       </div>
                       <div className="pb-4">
                         <p className="font-medium text-gray-800 dark:text-gray-100">
-                          Sent to Organ
+                          {t("sentToOrgan")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {formatDateTime(application.sent_time)}
@@ -364,7 +359,7 @@ const ApplicationInformation = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-800 dark:text-gray-100">
-                          Deadline
+                          {t("deadline")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {formatDateTime(application.deadline_time)}
@@ -378,37 +373,37 @@ const ApplicationInformation = () => {
             <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
               <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Text Information
+                  {t("textInformation")}
                 </h2>
               </div>
               <div className="p-5 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    User Text
+                    {t("userText")}
                   </label>
                   <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
-                      {application.user_text || "No user text provided"}
+                      {application.user_text || t("noUserText")}
                     </p>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Admin Text
+                    {t("adminText")}
                   </label>
                   <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
-                      {application.text || "No admin text provided"}
+                      {application.text || t("noAdminText")}
                     </p>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Organ Text
+                    {t("organText")}
                   </label>
                   <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[60px]">
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line break-words">
-                      {application.organ_text || "No organ text provided"}
+                      {application.organ_text || t("noOrganText")}
                     </p>
                   </div>
                 </div>
@@ -418,7 +413,7 @@ const ApplicationInformation = () => {
               <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   <FileText size={18} />
-                  Attachments
+                  {t("attachments")}
                 </h2>
               </div>
               <div className="p-5">
@@ -428,10 +423,10 @@ const ApplicationInformation = () => {
                       {getFileIcon("file_url", application.file_url)}
                       <div className="flex-1 flex flex-col justify-center">
                         <p className="font-medium text-gray-800 dark:text-gray-100">
-                          Main File
+                          {t("mainFile")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Fuqaro tomonidan asosiy yuklangan fayl
+                          {t("mainFileDescription")}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -440,7 +435,7 @@ const ApplicationInformation = () => {
                           className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko'rish
+                          {t("view")}
                         </button>
                       </div>
                     </div>
@@ -450,10 +445,10 @@ const ApplicationInformation = () => {
                       {getFileIcon("citizen_file", application.citizen_file)}
                       <div className="flex-1 flex flex-col justify-center">
                         <p className="font-medium text-gray-800 dark:text-gray-100">
-                          Citizen File
+                          {t("citizenFile")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Fuqaro tomonidan yuklangan fayl
+                          {t("citizenFileDescription")}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -464,7 +459,7 @@ const ApplicationInformation = () => {
                           className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko'rish
+                          {t("view")}
                         </button>
                       </div>
                     </div>
@@ -477,10 +472,10 @@ const ApplicationInformation = () => {
                       )}
                       <div className="flex-1 flex flex-col justify-center">
                         <p className="font-medium text-gray-800 dark:text-gray-100">
-                          Admin Extra File
+                          {t("adminExtraFile")}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Admin tomonidan qo'shimcha fayl
+                          {t("adminExtraFileDescription")}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -491,7 +486,7 @@ const ApplicationInformation = () => {
                           className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                         >
                           <Image size={14} />
-                          Ko'rish
+                          {t("view")}
                         </button>
                       </div>
                     </div>
@@ -507,10 +502,10 @@ const ApplicationInformation = () => {
                           {getFileIcon(`photo_${index}`, photo)}
                           <div className="flex-1 flex flex-col justify-center">
                             <p className="font-medium text-gray-800 dark:text-gray-100">
-                              Admin Photo {index + 1}
+                              {t("adminPhoto")} {index + 1}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Admin tomonidan yuklangan rasm
+                              {t("adminPhotoDescription")}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -519,7 +514,7 @@ const ApplicationInformation = () => {
                               className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm font-medium rounded hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center gap-1"
                             >
                               <Image size={14} />
-                              Ko'rish
+                              {t("view")}
                             </button>
                           </div>
                         </div>
@@ -527,7 +522,7 @@ const ApplicationInformation = () => {
                     )
                   ) : (
                     <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                      No attachments available
+                      {t("noAttachments")}
                     </div>
                   )}
                 </div>
@@ -593,12 +588,12 @@ const ApplicationInformation = () => {
                     d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
                   />
                 </svg>
-                Yuklab olish
+                {t("download")}
               </a>
               <button
                 onClick={() => setSelectedImage(null)}
                 className="bg-black/60 hover:bg-black/80 text-white rounded-full p-2 transition-all active:scale-95"
-                title="Yopish"
+                title={t("close")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

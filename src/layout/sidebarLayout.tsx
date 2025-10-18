@@ -1,17 +1,38 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Shield, Building2, Grid2X2, BarChart4, SettingsIcon } from "lucide-react";
+import {
+  Shield,
+  Building2,
+  Grid2X2,
+  BarChart4,
+  SettingsIcon,
+} from "lucide-react";
 import { useTheme } from "@/context/theme-provider";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+
 export default function SidebarLayout() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
 
   const menu = [
-    { name: "Organizations", icon: <Building2 size={18} />, path: "/" },
-    { name: "Applications", icon: <Grid2X2 size={18} />, path: "/applications" },
-    { name: "Statistics", icon: <BarChart4 size={18} />, path: "/statistics" },
-    { name: "Settings", icon: <SettingsIcon size={18} />, path: "/settings" },
+    { name: t("organizations"), icon: <Building2 size={18} />, path: "/" },
+    {
+      name: t("applications"),
+      icon: <Grid2X2 size={18} />,
+      path: "/applications",
+    },
+    {
+      name: t("statistics"),
+      icon: <BarChart4 size={18} />,
+      path: "/statistics",
+    },
+    {
+      name: t("settings"),
+      icon: <SettingsIcon size={18} />,
+      path: "/settings",
+    },
   ];
 
   return (
@@ -32,12 +53,14 @@ export default function SidebarLayout() {
         <div className="flex items-center space-x-2 px-2 py-3 mb-6 mt-7">
           <div
             className={`p-2 rounded-lg transition ${
-              theme === "dark" ? "bg-blue-600 text-white" : "bg-blue-600 text-white"
+              theme === "dark"
+                ? "bg-blue-600 text-white"
+                : "bg-blue-600 text-white"
             }`}
           >
             <Shield size={20} />
           </div>
-          <span className="font-semibold text-lg">Admin Panel</span>
+          <span className="font-semibold text-lg">{t("adminPanel")}</span>
         </div>
         <nav className="flex flex-col space-y-1">
           {menu.map((item) => (
@@ -59,9 +82,16 @@ export default function SidebarLayout() {
             </button>
           ))}
         </nav>
-        <div className="border-t-2 mt-[65vh] w-full">
-          <Button onClick={()=>{navigate('/login')}} variant="destructive"
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4">Log Out</Button>
+        <div className="border-t-2 mt-[63vh] w-full">
+          <Button
+            onClick={() => {
+              navigate("/login");
+            }}
+            variant="destructive"
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4"
+          >
+            {t("logOut")}
+          </Button>
         </div>
       </aside>
       <main

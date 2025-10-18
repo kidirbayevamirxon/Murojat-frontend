@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface Organization {
   id: number;
@@ -16,7 +17,7 @@ interface Application {
 
 interface SendToOrganProps {
   application: Application;
-  initialStatus?: string; 
+  initialStatus?: string;
   onSendSuccess: () => void;
 }
 
@@ -25,6 +26,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
   initialStatus = "not_completed",
   onSendSuccess,
 }) => {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [days, setDays] = useState<number | undefined>(0);
   const [status, setStatus] = useState(initialStatus);
@@ -71,14 +73,14 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
         status,
         days: Number(days),
       });
-      toast.success("Application sent successfully!");
+      toast.success(t("sendSuccess"));
       setText("");
       setOrgId(null);
       setDays(undefined);
       onSendSuccess();
     } catch (err) {
       console.error("Error sending application:", err);
-      toast.error("Failed to send application!");
+      toast.error(t("sendError"));
     } finally {
       setLoading(false);
     }
@@ -94,25 +96,25 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
     <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden h-fit transition-colors">
       <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          Send to Organ
+          {t("sendToOrgan")}
         </h2>
       </div>
       <div className="p-5 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Message Text
+            {t("messageText")}
           </label>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Write message to organ..."
+            placeholder={t("writeMessageToOrgan")}
             className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Days
+              {t("days")}
             </label>
             <input
               type="text"
@@ -123,7 +125,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Status
+              {t("status")}
             </label>
 
             {status === "pending" && (
@@ -132,8 +134,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
               >
-                <option value="sent_to_organ">sent_to_organ</option>
-                <option value="not_completed">Not Completed</option>
+                <option value="sent_to_organ">{t("sent_to_organ")}</option>
+                <option value="not_completed">{t("not_completed")}</option>
               </select>
             )}
             {status === "review" && (
@@ -142,8 +144,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
               >
-                <option value="not_completed">Not Completed</option>
-                <option value="sent_to_organ">Sent to Organ</option>
+                <option value="not_completed">{t("not_completed")}</option>
+                <option value="sent_to_organ">{t("sent_to_organ")}</option>
               </select>
             )}
             {status === "admin_approval" && (
@@ -152,15 +154,17 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
               >
-                <option value="completed">Completed</option>
-                <option value="returned_to_organ">Returned to Organ</option>
-                <option value="not_completed">Not Completed</option>
+                <option value="completed">{t("completed")}</option>
+                <option value="returned_to_organ">
+                  {t("returned_to_organ")}
+                </option>
+                <option value="not_completed">{t("not_completed")}</option>
               </select>
             )}
           </div>
           <div className="relative col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Organization
+              {t("organization")}
             </label>
             <input
               type="text"
@@ -172,7 +176,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
                 fetchOrganizations(value);
               }}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              placeholder="Enter organization name..."
+              placeholder={t("enterOrganizationName")}
               className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
             />
 
@@ -202,22 +206,22 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
           className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center justify-center gap-2 transition disabled:opacity-70 disabled:cursor-not-allowed mt-2"
         >
           <Upload size={16} />
-          {loading ? "Sending..." : "Send to Organ"}
+          {loading ? t("sending") : t("sendToOrganButton")}
         </button>
 
         {application.organ_text && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Current Organ Information
+              {t("currentOrganInfo")}
             </h3>
             <div className="bg-gray-50 dark:bg-[#141c27] p-3 rounded-lg border border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                <span className="font-medium">Organ Text:</span>{" "}
+                <span className="font-medium">{t("organText")}:</span>{" "}
                 {application.organ_text}
               </p>
               {application.organ_deadline_time && (
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium">Organ Deadline:</span>{" "}
+                  <span className="font-medium">{t("organDeadline")}:</span>{" "}
                   {formatDateTime(application.organ_deadline_time)}
                 </p>
               )}

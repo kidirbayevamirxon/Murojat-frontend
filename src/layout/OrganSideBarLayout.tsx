@@ -2,16 +2,22 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Shield, LucideBuilding2, SettingsIcon } from "lucide-react";
 import { useTheme } from "@/context/theme-provider";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function OrganSidebarLayout() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
 
   const menu = [
-    { name: "Murojatlar", icon: <LucideBuilding2 size={18} />, path: "/organ" },
     {
-      name: "Settings",
+      name: t("applications"),
+      icon: <LucideBuilding2 size={18} />,
+      path: "/organ",
+    },
+    {
+      name: t("settings"),
       icon: <SettingsIcon size={18} />,
       path: "/organ/settings",
     },
@@ -36,7 +42,7 @@ export default function OrganSidebarLayout() {
           <div className="bg-blue-600 text-white p-2 rounded-lg">
             <Shield size={20} />
           </div>
-          <span className="font-semibold text-lg">Organ Panel</span>
+          <span className="font-semibold text-lg">{t("organPanel")}</span>
         </div>
         <nav className="flex flex-col space-y-1">
           {menu.map((item) => (
@@ -59,8 +65,15 @@ export default function OrganSidebarLayout() {
           ))}
         </nav>
         <div className="border-t-2 mt-[70vh] w-full">
-          <Button onClick={()=>{navigate('/login')}} variant="destructive"
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4">Log Out</Button>
+          <Button
+            onClick={() => {
+              navigate("/login");
+            }}
+            variant="destructive"
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4"
+          >
+            {t("logOut")}
+          </Button>
         </div>
       </aside>
       <main

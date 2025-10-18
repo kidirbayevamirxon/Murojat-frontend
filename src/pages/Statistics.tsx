@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import Pagination from "@/components/Pagination";
+import { useTranslation } from "react-i18next";
 
 interface Applications {
   not_completed: number;
@@ -32,6 +33,7 @@ interface ApiResponse {
 }
 
 export default function AdminStatistics() {
+  const { t } = useTranslation();
   const [data, setData] = useState<ApiResponse>({
     data: [],
     total_pages: 1,
@@ -82,7 +84,7 @@ export default function AdminStatistics() {
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-2xl font-semibold text-[#E4E9F2]">
-          Organization Application Statistics
+          {t("organizationStatistics")}
         </h1>
         <Button
           className="
@@ -112,19 +114,17 @@ export default function AdminStatistics() {
               link.remove();
             } catch (err) {
               console.error("Excel eksportda xatolik:", err);
-              alert("Faylni yuklab olishda xatolik yuz berdi!");
+              alert(t("exportError"));
             }
           }}
         >
-          Export as xlsx
+          {t("exportExcel")}
         </Button>
       </div>
       <div className="mb-6 max-w-md relative">
-        <Search
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
-        />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
-          placeholder="Search for an organization..."
+          placeholder={t("searchOrganization")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="
@@ -146,7 +146,7 @@ export default function AdminStatistics() {
               className="p-6 text-center"
               style={{ color: "#A0AEC0", backgroundColor: "#1A2433" }}
             >
-              Loading...
+              {t("loading")}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -154,19 +154,37 @@ export default function AdminStatistics() {
                 <thead style={{ backgroundColor: "#1F2A3A" }}>
                   <tr className="text-gray-300 border-b border-[#2B3648]">
                     <th className="py-4 px-4 text-left font-semibold text-[#E4E9F2] min-w-[200px]">
-                      Organization Name
+                      {t("organizationName")}
                     </th>
-                    <th className="py-4 px-4 text-center text-yellow-400">Not Completed</th>
-                    <th className="py-4 px-4 text-center text-blue-400">Pending</th>
-                    <th className="py-4 px-4 text-center text-indigo-400">Sent to Org</th>
-                    <th className="py-4 px-4 text-center text-green-400">Completed</th>
-                    <th className="py-4 px-4 text-center text-purple-400">Review</th>
-                    <th className="py-4 px-4 text-center text-emerald-400">Accepted</th>
-                    <th className="py-4 px-4 text-center text-pink-400">Admin Approval</th>
-                    <th className="py-4 px-4 text-center text-gray-400">Expired Closed</th>
-                    <th className="py-4 px-4 text-center text-orange-400">Returned</th>
+                    <th className="py-4 px-4 text-center text-yellow-400">
+                      {t("not_completed")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-blue-400">
+                      {t("pending")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-indigo-400">
+                      {t("sent_to_organ")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-green-400">
+                      {t("completed")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-purple-400">
+                      {t("review")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-emerald-400">
+                      {t("accepted")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-pink-400">
+                      {t("admin_approval")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-gray-400">
+                      {t("expired_closed")}
+                    </th>
+                    <th className="py-4 px-4 text-center text-orange-400">
+                      {t("returned_to_organ")}
+                    </th>
                     <th className="py-4 px-4 text-center text-blue-400 font-semibold">
-                      Total
+                      {t("total")}
                     </th>
                   </tr>
                 </thead>
@@ -178,7 +196,7 @@ export default function AdminStatistics() {
                         className="text-center py-8 text-gray-400"
                         style={{ backgroundColor: "#1A2433" }}
                       >
-                        No organizations found
+                        {t("noOrganizations")}
                       </td>
                     </tr>
                   ) : (

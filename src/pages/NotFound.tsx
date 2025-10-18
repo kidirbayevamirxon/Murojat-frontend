@@ -1,12 +1,14 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { LayoutDashboard } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const NotFoundPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleReturnToDashboard = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -14,7 +16,7 @@ const NotFoundPage: React.FC = () => {
       <header className="absolute top-0 left-0 right-0 p-6">
         <div className="flex items-center gap-2 text-xl font-bold">
           <LayoutDashboard className="text-blue-600 dark:text-blue-400" size={24} />
-          <span>Organ Panel</span>
+          <span>{t("organ_panel")}</span>
         </div>
       </header>
       <main className="flex flex-1 items-center justify-center">
@@ -25,18 +27,18 @@ const NotFoundPage: React.FC = () => {
                 404
               </p>
               <p className="text-gray-800 dark:text-gray-100 text-2xl font-bold leading-tight">
-                Page Not Found
+                {t("page_not_found")}
               </p>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">
-              The page you are looking for does not exist or has been moved.
+              {t("page_not_found_description")}
             </p>
             <div className="flex justify-center pt-4">
               <button
                 onClick={handleReturnToDashboard}
                 className="flex items-center justify-center h-12 px-6 rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition-colors"
               >
-                <span className="truncate">Return to Dashboard</span>
+                <span className="truncate">{t("return_to_dashboard")}</span>
               </button>
             </div>
           </div>
@@ -44,7 +46,7 @@ const NotFoundPage: React.FC = () => {
       </main>
       <footer className="absolute bottom-0 left-0 right-0 p-6">
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          © {new Date().getFullYear()} Organ Panel. All rights reserved.
+          © {new Date().getFullYear()} {t("organ_panel")}. {t("all_rights_reserved")}
         </p>
       </footer>
     </div>

@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useTheme } from "@/context/theme-provider";
+import { useTranslation } from "react-i18next";
 
 interface Application {
   id: number;
@@ -21,15 +22,24 @@ interface Application {
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700",
-  not_completed: "bg-gray-50 text-gray-600 border border-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:border-gray-700",
-  sent_to_organ: "bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-700",
-  completed: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700",
-  review: "bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-700",
-  accepted: "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
-  admin_approval: "bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-700",
-  expired_closed: "bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-900/40 dark:text-slate-300 dark:border-slate-700",
-  returned_to_organ: "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-700",
+  pending:
+    "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700",
+  not_completed:
+    "bg-gray-50 text-gray-600 border border-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:border-gray-700",
+  sent_to_organ:
+    "bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-700",
+  completed:
+    "bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700",
+  review:
+    "bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-700",
+  accepted:
+    "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
+  admin_approval:
+    "bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-700",
+  expired_closed:
+    "bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-900/40 dark:text-slate-300 dark:border-slate-700",
+  returned_to_organ:
+    "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-700",
 };
 
 const statuses = [
@@ -45,6 +55,7 @@ const statuses = [
 ];
 
 export default function Organ() {
+  const { t } = useTranslation();
   const [applications, setApplications] = useState<Application[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("pending");
   const [search, setSearch] = useState<string>("");
@@ -94,7 +105,7 @@ export default function Organ() {
       }`}
     >
       <h1 className="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-400">
-        Applications
+        {t("applications")}
       </h1>
       <div
         className={`rounded-2xl shadow-sm border p-5 mb-6 transition-colors ${
@@ -105,7 +116,7 @@ export default function Organ() {
       >
         <div className="flex flex-wrap gap-3 items-center mb-4">
           <Input
-            placeholder="Search by name or ID"
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className={`w-full sm:w-72 ${
@@ -122,12 +133,12 @@ export default function Organ() {
                   : "border-blue-200"
               }`}
             >
-              <SelectValue placeholder="Select status" />
+              <SelectValue placeholder={t("selectStatus")} />
             </SelectTrigger>
             <SelectContent>
               {statuses.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {s.replace(/_/g, " ")}
+                  {t(s)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -147,11 +158,11 @@ export default function Organ() {
               }`}
             >
               <tr className="text-left">
-                <th className="py-3 px-4">APPLICATION ID</th>
-                <th className="py-3 px-4">APPLICANT NAME</th>
-                <th className="py-3 px-4">PHONE NUMBER</th>
-                <th className="py-3 px-4">STATUS</th>
-                <th className="py-3 px-4">DATE SUBMITTED</th>
+                <th className="py-3 px-4">{t("applicationId")}</th>
+                <th className="py-3 px-4">{t("applicantName")}</th>
+                <th className="py-3 px-4">{t("phoneNumber")}</th>
+                <th className="py-3 px-4">{t("status")}</th>
+                <th className="py-3 px-4">{t("dateSubmitted")}</th>
               </tr>
             </thead>
             <tbody>
@@ -161,7 +172,7 @@ export default function Organ() {
                     colSpan={5}
                     className="text-center py-6 text-blue-500 dark:text-blue-400"
                   >
-                    Loading...
+                    {t("loading")}
                   </td>
                 </tr>
               ) : filtered.length > 0 ? (
@@ -185,7 +196,7 @@ export default function Organ() {
                           "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                         }`}
                       >
-                        {a.status.replace(/_/g, " ")}
+                        {t(a.status)}
                       </span>
                     </td>
                     <td className="py-3 px-4">
@@ -199,7 +210,7 @@ export default function Organ() {
                     colSpan={5}
                     className="text-center py-6 text-gray-500 dark:text-gray-400"
                   >
-                    No results found
+                    {t("noResults")}
                   </td>
                 </tr>
               )}
@@ -208,7 +219,10 @@ export default function Organ() {
         </div>
         <div className="flex justify-between items-center mt-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Showing {filtered.length} of {applications.length} results
+            {t("showingResults", {
+              filtered: filtered.length,
+              total: applications.length,
+            })}
           </p>
           <div className="flex items-center gap-2">
             <Button

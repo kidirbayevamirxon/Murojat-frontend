@@ -3,50 +3,52 @@ import { Search } from "lucide-react";
 import { axiosInstance } from "@/api/api";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
-const STATUS_DISPLAY_MAP = {
-  not_completed: "Not Completed",
-  pending: "Pending",
-  sent_to_organ: "Sent to Organ",
-  completed: "Completed",
-  review: "Review",
-  accepted: "Accepted",
-  admin_approval: "Admin Approval",
-  returned_to_organ: "Returned to Organ",
-  expired_closed: "Expired / Closed",
-} as const;
-
-type StatusKey = keyof typeof STATUS_DISPLAY_MAP;
-type StatusValue = (typeof STATUS_DISPLAY_MAP)[StatusKey];
-
-type Application = {
-  id: string;
-  name: string;
-  phone: string;
-  organization: string;
-  status: StatusValue;
-  date: string;
-};
-
-const tabs: StatusKey[] = [
-  "pending",
-  "completed",
-  "not_completed",
-  "sent_to_organ",
-  "review",
-  "accepted",
-  "admin_approval",
-  "returned_to_organ",
-  "expired_closed",
-];
+import { useTranslation } from "react-i18next";
 
 export default function Applications() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<StatusKey>("pending");
   const [search, setSearch] = useState("");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const STATUS_DISPLAY_MAP = {
+    not_completed: t("notCompleted"),
+    pending: t("pending"),
+    sent_to_organ: t("sentToOrgan"),
+    completed: t("completed"),
+    review: t("review"),
+    accepted: t("accepted"),
+    admin_approval: t("adminApproval"),
+    returned_to_organ: t("returnedToOrgan"),
+    expired_closed: t("expiredClosed"),
+  } as const;
+
+  type StatusKey = keyof typeof STATUS_DISPLAY_MAP;
+  type StatusValue = (typeof STATUS_DISPLAY_MAP)[StatusKey];
+
+  type Application = {
+    id: string;
+    name: string;
+    phone: string;
+    organization: string;
+    status: StatusValue;
+    date: string;
+  };
+
+  const tabs: StatusKey[] = [
+    "pending",
+    "completed",
+    "not_completed",
+    "sent_to_organ",
+    "review",
+    "accepted",
+    "admin_approval",
+    "returned_to_organ",
+    "expired_closed",
+  ];
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -63,7 +65,7 @@ export default function Applications() {
           phone: item.phone || "N/A",
           organization: item.organization || "N/A",
           status:
-            STATUS_DISPLAY_MAP[item.status as StatusKey] || "Not Completed",
+            STATUS_DISPLAY_MAP[item.status as StatusKey] || t("notCompleted"),
           date: new Date(item.created_at).toLocaleDateString(),
         })
       );
@@ -71,7 +73,7 @@ export default function Applications() {
       setApplications(transformedApps);
     } catch (err) {
       console.error("Error fetching applications:", err);
-      setError("Failed to load applications. Please try again later.");
+      setError(t("failed"));
     } finally {
       setLoading(false);
     }
@@ -79,7 +81,7 @@ export default function Applications() {
 
   useEffect(() => {
     fetchApplications();
-  }, [activeTab]);
+  }, [activeTab, t]);
 
   const filtered = applications.filter(
     (app) =>
@@ -95,16 +97,14 @@ export default function Applications() {
     >
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-2xl font-semibold">Applications</h1>
-          <p className="text-gray-400 text-sm">
-            Manage and track all applications.
-          </p>
+          <h1 className="text-2xl font-semibold">{t("applications")}</h1>
+          <p className="text-gray-400 text-sm">{t("manageTrack")}</p>
         </div>
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search applications..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="
@@ -149,18 +149,18 @@ export default function Applications() {
         <table className="min-w-full text-left text-sm border-separate border-spacing-y-2">
           <thead style={{ backgroundColor: "#1A2433", color: "#E4E9F2" }}>
             <tr>
-              <th className="px-4 py-3 font-semibold">Application ID</th>
-              <th className="px-4 py-3 font-semibold">Applicant Name</th>
-              <th className="px-4 py-3 font-semibold">Phone</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Submitted Date</th>
+              <th className="px-4 py-3 font-semibold">{t("applicationId")}</th>
+              <th className="px-4 py-3 font-semibold">{t("applicantName")}</th>
+              <th className="px-4 py-3 font-semibold">{t("phone")}</th>
+              <th className="px-4 py-3 font-semibold">{t("status")}</th>
+              <th className="px-4 py-3 font-semibold">{t("submittedDate")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={5} className="text-center py-4 text-gray-400">
-                  Loading applications...
+                  {t("loading")}
                 </td>
               </tr>
             ) : error ? (
@@ -190,11 +190,11 @@ export default function Applications() {
                       className={`text-xs font-semibold px-3 py-1 rounded-full`}
                       style={{
                         backgroundColor:
-                          app.status === "Completed"
+                          app.status === t("completed")
                             ? "#0F5132"
-                            : app.status === "Pending"
+                            : app.status === t("pending")
                             ? "#1E3A8A"
-                            : app.status === "Returned to Organ"
+                            : app.status === t("returnedToOrgan")
                             ? "#58151C"
                             : "#2B3648",
                         color: "#E4E9F2",
@@ -211,7 +211,7 @@ export default function Applications() {
             ) : (
               <tr>
                 <td colSpan={5} className="text-center text-gray-500 py-4">
-                  No applications found.
+                  {t("noApps")}
                 </td>
               </tr>
             )}

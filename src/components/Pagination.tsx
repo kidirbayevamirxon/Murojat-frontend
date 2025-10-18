@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface PaginationProps {
   currentPage: number;
@@ -16,6 +17,7 @@ export default function Pagination({
   totalItems,
   filteredItems,
 }: PaginationProps) {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -52,9 +54,10 @@ export default function Pagination({
             : "bg-gray-100 text-gray-600"
         }`}
       >
-        Showing{" "}
-        <span className="font-semibold">{filteredItems}</span> of{" "}
-        <span className="font-semibold">{totalItems}</span> organizations
+        {t("showingResults", {
+          filtered: filteredItems,
+          total: totalItems,
+        })}
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -68,7 +71,7 @@ export default function Pagination({
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          Previous
+          {t("previous")}
         </Button>
         <div className="flex items-center gap-1">
           {pages.map((p, index) =>
@@ -106,7 +109,7 @@ export default function Pagination({
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
       <div className="flex w-[23%]" />

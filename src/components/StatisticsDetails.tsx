@@ -14,6 +14,7 @@ import {
   Cell,
 } from "recharts";
 import Calendar from "./Calendar";
+import { useTranslation } from "react-i18next";
 
 interface Applications {
   [key: string]: number;
@@ -26,6 +27,7 @@ interface OrganizationDetail {
 }
 
 export default function AdminStatisticsDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [org, setOrg] = useState<OrganizationDetail | null>(null);
@@ -42,12 +44,12 @@ export default function AdminStatisticsDetail() {
   if (!org)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#101922] text-gray-600 dark:text-gray-300 text-lg">
-        Loading...
+        {t("loading")}
       </div>
     );
 
   const chartData = Object.keys(org.applications).map((key) => ({
-    name: key.replace(/_/g, " "),
+    name: key,
     value: org.applications[key],
   }));
 
@@ -61,10 +63,10 @@ export default function AdminStatisticsDetail() {
           onClick={() => navigate(-1)}
           className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition"
         >
-          <ArrowLeft size={16} /> Back
+          <ArrowLeft size={16} /> {t("back")}
         </Button>
         <h1 className="text-2xl font-bold">
-          Application Statistics for:{" "}
+          {t("applicationStatisticsFor")}{" "}
           <span className="text-indigo-600 dark:text-indigo-400">
             {org.organization_name}
           </span>
@@ -75,7 +77,7 @@ export default function AdminStatisticsDetail() {
           <CardContent className="py-4 pr-3 pl-0">
             <div className="text-center mb-6">
               <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-1">
-                Application Status Distribution
+                {t("applicationStatusDistribution")}
               </h2>
               <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
                 {total}
@@ -88,6 +90,7 @@ export default function AdminStatisticsDetail() {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: "#aaa", fontSize: 12 }}
+                  tickFormatter={(value) => t(value)}
                 />
                 <YAxis
                   axisLine={false}
@@ -101,6 +104,8 @@ export default function AdminStatisticsDetail() {
                     borderRadius: "8px",
                     color: "#fff",
                   }}
+                  formatter={(value) => [value, t("applications")]}
+                  labelFormatter={(label) => t(label)}
                 />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={50}>
                   {chartData.map((_, i) => (
@@ -117,14 +122,14 @@ export default function AdminStatisticsDetail() {
         <Card className="bg-white dark:bg-gray-800 shadow-md border border-gray-100 dark:border-gray-700">
           <CardContent className="p-6">
             <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">
-              Application Status Details
+              {t("applicationStatusDetails")}
             </h3>
             <table className="w-full text-left border-collapse">
               <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm">
                 <tr>
-                  <th className="p-3 font-medium">Status</th>
-                  <th className="p-3 font-medium">Applications</th>
-                  <th className="p-3 font-medium">Percentage</th>
+                  <th className="p-3 font-medium">{t("status")}</th>
+                  <th className="p-3 font-medium">{t("applications")}</th>
+                  <th className="p-3 font-medium">{t("percentage")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -133,7 +138,7 @@ export default function AdminStatisticsDetail() {
                     key={i}
                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    <td className="p-3">{row.name}</td>
+                    <td className="p-3">{t(row.name)}</td>
                     <td className="p-3 font-semibold">{row.value}</td>
                     <td className="p-3">
                       {((row.value / total) * 100).toFixed(1)}%
@@ -147,7 +152,7 @@ export default function AdminStatisticsDetail() {
         <Card className="bg-white dark:bg-gray-800 shadow-md border border-gray-100 dark:border-gray-700">
           <CardContent className="p-6">
             <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">
-              Floor of Application
+              {t("applicationBreakdown")}
             </h3>
             <div className="space-y-3">
               {chartData.map((item, i) => (
@@ -160,7 +165,7 @@ export default function AdminStatisticsDetail() {
                       className="w-3 h-3 rounded-full mr-3"
                       style={{ backgroundColor: colors[i % colors.length] }}
                     ></div>
-                    <span>{item.name}</span>
+                    <span>{t(item.name)}</span>
                   </div>
                   <span className="font-semibold">{item.value}</span>
                 </div>
