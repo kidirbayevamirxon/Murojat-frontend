@@ -43,9 +43,8 @@ const statusColors: Record<string, string> = {
 };
 
 const statuses = [
-  "pending",
-  "not_completed",
   "sent_to_organ",
+  "not_completed",
   "completed",
   "review",
   "accepted",
@@ -57,7 +56,7 @@ const statuses = [
 export default function Organ() {
   const { t } = useTranslation();
   const [applications, setApplications] = useState<Application[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string>("pending");
+  const [statusFilter, setStatusFilter] = useState<string>("sent_to_organ");
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);

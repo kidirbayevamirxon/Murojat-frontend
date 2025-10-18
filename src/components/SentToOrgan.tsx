@@ -30,6 +30,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
   const [text, setText] = useState("");
   const [days, setDays] = useState<number | undefined>(0);
   const [status, setStatus] = useState(initialStatus);
+  const [statuss, setStatuss] = useState<string>();
   const [orgName, setOrgName] = useState("");
   const [orgId, setOrgId] = useState<number | null>(null);
   const [orgSuggestions, setOrgSuggestions] = useState<Organization[]>([]);
@@ -70,7 +71,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
         application_id: application.application_id,
         org_id: Number(orgId),
         text,
-        status,
+        status: statuss,
         days: Number(days),
       });
       toast.success(t("sendSuccess"));
@@ -100,58 +101,79 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
         </h2>
       </div>
       <div className="p-5 space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t("messageText")}
-          </label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={t("writeMessageToOrgan")}
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+        {(statuss === "pending" ||
+          statuss === "admin_approval" ||
+          statuss === "sent_to_organ" ||
+          statuss === "not_completed" ||
+          statuss === "completed" ||
+          statuss === "accepted" ||
+          statuss === "returned_to_organ") && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t("days")}
+              {t("messageText")}
             </label>
-            <input
-              type="text"
-              value={days || ""}
-              onChange={(e) => setDays(Number(e.target.value))}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={t("writeMessageToOrgan")}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t("status")}
-            </label>
+        )}
+        <div className="grid grid-cols-2 gap-3">
+          {status !== "admin_approval" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("days")}
+              </label>
+              <input
+                type="text"
+                value={days || ""}
+                onChange={(e) => setDays(Number(e.target.value))}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+              />
+            </div>
+          )}
+          {status === "pending" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("status")}
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatuss(e.target.value)}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+              >
+                <option value="sent_to_organ">{t("sent_to_organ")}</option>
+                <option value="not_completed">{t("not_completed")}</option>
+              </select>
+            </div>
+          )}
+          {status === "review" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("status")}
+              </label>
 
-            {status === "pending" && (
               <select
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-              >
-                <option value="sent_to_organ">{t("sent_to_organ")}</option>
-                <option value="not_completed">{t("not_completed")}</option>
-              </select>
-            )}
-            {status === "review" && (
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={(e) => setStatuss(e.target.value)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
               >
                 <option value="not_completed">{t("not_completed")}</option>
                 <option value="sent_to_organ">{t("sent_to_organ")}</option>
               </select>
-            )}
-            {status === "admin_approval" && (
+            </div>
+          )}
+          {status === "admin_approval" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("status")}
+              </label>
+
               <select
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={(e) => setStatuss(e.target.value)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
               >
                 <option value="completed">{t("completed")}</option>
@@ -160,8 +182,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
                 </option>
                 <option value="not_completed">{t("not_completed")}</option>
               </select>
-            )}
-          </div>
+            </div>
+          )}
           <div className="relative col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("organization")}
