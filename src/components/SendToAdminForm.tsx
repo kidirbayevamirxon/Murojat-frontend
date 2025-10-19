@@ -102,7 +102,7 @@ export default function SendToAdminForm({
               <option value="review">{t("review")}</option>
             </select>
           )}
-          <select
+          {/* <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
@@ -116,20 +116,22 @@ export default function SendToAdminForm({
             <option value="admin_approval">{t("admin_approval")}</option>
             <option value="expired_closed">{t("expired_closed")}</option>
             <option value="returned_to_organ">{t("returned_to_organ")}</option>
-          </select>
+          </select> */}
         </div>
-        <div className="flex flex-col flex-1">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t("days")}:
-          </label>
-          <Input
-            type="number"
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            inputMode="numeric"
-          />
-        </div>
+        {status !== "admin_approval" && (
+          <div className="flex flex-col flex-1">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t("days")}:
+            </label>
+            <Input
+              type="number"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              inputMode="numeric"
+            />
+          </div>
+        )}
       </div>
 
       <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
