@@ -209,7 +209,7 @@ export default function OrganInfarmation() {
               </span>
             </div>
           </div>
-          {!["completed", "not_completed", "review", "admin_approval", "expired_closed"].includes(data.application_status) && (
+          {!["completed", "not_completed", "admin_approval", "expired_closed"].includes(data.application_status) && (
   <SendToAdminForm 
     application={data} 
     onSendSuccess={fetchApplicationDetails} 
