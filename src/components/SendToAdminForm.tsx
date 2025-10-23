@@ -21,17 +21,18 @@ export default function SendToAdminForm({
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(application.application_status);
+  const [day, setDay] = useState<string>("");
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
+  const [organFile, setOrganFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
   const [adminPhotos, setAdminPhotos] = useState<File[]>([]);
-  const [day, setDay] = useState<string>("");
+  const [extraFiles, setExtraFiles] = useState<File[]>([]);
 
   const handleSend = async () => {
     if (!application) {
       toast.error(t("noDataLoaded"));
       return;
     }
-
     try {
       setLoading(true);
       const formData = new FormData();
@@ -39,11 +40,11 @@ export default function SendToAdminForm({
       formData.append("text", message);
       formData.append("status", status);
       formData.append("days", day?.toString() || "0");
-
       if (citizenFile) formData.append("citizen_file", citizenFile);
+      if (organFile) formData.append("organ_file", organFile);
       if (adminExtraFile) formData.append("admin_extra_file", adminExtraFile);
-      adminPhotos.forEach((photo) => formData.append("admin_photos", photo));
-
+      adminPhotos.forEach((p) => formData.append("admin_photos", p));
+      extraFiles.forEach((f) => formData.append("extra_files", f));
       await axiosInstance.post("/organ/send_to_admin", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -51,8 +52,10 @@ export default function SendToAdminForm({
       toast.success(t("messageSentSuccess"));
       setMessage("");
       setCitizenFile(null);
+      setOrganFile(null);
       setAdminExtraFile(null);
       setAdminPhotos([]);
+      setExtraFiles([]);
       onSendSuccess();
     } catch (err: any) {
       console.error(err);
@@ -63,146 +66,98 @@ export default function SendToAdminForm({
   };
 
   return (
-    <div className="flex flex-col gap-2 border-t pt-3 dark:border-gray-700">
-      <div className="flex gap-2 items-center">
-        <div className="flex flex-col flex-1">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t("status")}:
-          </label>
-          {status === "sent_to_organ" && (
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-            >
-              {" "}
-              <option value="accepted">{t("accepted")}</option>
-              <option value="review">{t("review")}</option>
-            </select>
-          )}
-          {status === "accepted" && (
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-            >
-              {" "}
-              <option value="admin_approval">{t("admin_approval")}</option>
-              <option value="review">{t("review")}</option>
-            </select>
-          )}
-          {status === "returned_to_organ" && (
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-            >
-              {" "}
-              <option value="admin_approval">{t("admin_approval")}</option>
-              <option value="review">{t("review")}</option>
-            </select>
-          )}
-          {status === "review" && (
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-            >
-              {" "}
-              <option value="review">{t("review")}</option>
-              <option value="accepted">{t("accepted")}</option>
-              <option value="not_completed">{t("not_completed")}</option>
-            </select>
-          )}
-          {/* <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-          >
-            <option value="not_completed">{t("not_completed")}</option>
-            <option value="pending">{t("pending")}</option>
-            <option value="sent_to_organ">{t("sent_to_organ")}</option>
-            <option value="completed">{t("completed")}</option>
-            <option value="review">{t("review")}</option>
-            <option value="accepted">{t("accepted")}</option>
-            <option value="admin_approval">{t("admin_approval")}</option>
-            <option value="expired_closed">{t("expired_closed")}</option>
-            <option value="returned_to_organ">{t("returned_to_organ")}</option>
-          </select> */}
+    <div className="flex flex-col gap-3 border-t pt-3 dark:border-gray-700">
+      {(status === "sent_to_organ" ||
+        status === "review" ||
+        status === "accepted" ||
+        status === "admin_approval" ||
+        status === "returned_to_organ") && (
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">{t("organText")}</label>
+          <Input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
         </div>
-        {status === "admin_approval"&& (
-          <div className="flex flex-col flex-1">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("days")}:
-            </label>
+      )}
+      {(status === "sent_to_organ" ||
+        status === "review" ||
+        status === "returned_to_organ") && (
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">{t("days")}</label>
+          <Input
+            type="number"
+            value={day}
+            onChange={(e) => setDay(e.target.value)}
+            inputMode="numeric"
+          />
+        </div>
+      )}
+      {(status === "accepted" || status === "admin_approval") && (
+        <div className="flex flex-col gap-4 mt-3">
+          <div>
+            <label className="font-medium">{t("citizenFile")}</label>
             <Input
-              type="number"
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              inputMode="numeric"
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) =>
+                setCitizenFile(e.target.files?.[0] || null)
+              }
             />
           </div>
-        )}
-        {status !== "review" && (
-          <div className="flex flex-col flex-1">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("days")}:
-            </label>
+
+          <div>
+            <label className="font-medium">{t("organFile")}</label>
             <Input
-              type="number"
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-sm bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              inputMode="numeric"
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) =>
+                setOrganFile(e.target.files?.[0] || null)
+              }
             />
           </div>
-        )}
-      </div>
 
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t("citizenFile")}:
-      </label>
-      <Input
-        type="file"
-        accept="image/*,application/pdf"
-        onChange={(e) => setCitizenFile(e.target.files?.[0] || null)}
-        className="bg-white dark:bg-[#1a2533] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-      />
+          <div>
+            <label className="font-medium">{t("adminExtraFile")}</label>
+            <Input
+              type="file"
+              accept=".pdf,.doc,.docx,.zip"
+              onChange={(e) =>
+                setAdminExtraFile(e.target.files?.[0] || null)
+              }
+            />
+          </div>
 
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t("adminExtraFile")}:
-      </label>
-      <Input
-        type="file"
-        accept="image/*,application/pdf"
-        onChange={(e) => setAdminExtraFile(e.target.files?.[0] || null)}
-        className="bg-white dark:bg-[#1a2533] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-      />
+          <div>
+            <label className="font-medium">{t("adminPhotos")}</label>
+            <Input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) =>
+                setAdminPhotos(Array.from(e.target.files || []))
+              }
+            />
+          </div>
 
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t("adminPhotos")}:
-      </label>
-      <Input
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={(e) => setAdminPhotos(Array.from(e.target.files || []))}
-        className="bg-white dark:bg-[#1a2533] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-      />
-      
-      <Input
-        placeholder={t("typeYourMessage")}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="flex-1 p-3 bg-white dark:bg-[#1a2533] border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-        disabled={loading}
-      />
+          <div>
+            <label className="font-medium">{t("extraFiles")}</label>
+            <Input
+              type="file"
+              multiple
+              onChange={(e) =>
+                setExtraFiles(Array.from(e.target.files || []))
+              }
+            />
+          </div>
+        </div>
+      )}
 
       <Button
         onClick={handleSend}
         disabled={loading}
-        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white w-full rounded-lg"
+        className="mt-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white w-full rounded-lg"
       >
         {loading ? t("sending") : t("sendMessage")}
       </Button>

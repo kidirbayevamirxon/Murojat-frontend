@@ -187,28 +187,28 @@ export default function OrganInfarmation() {
           </div>
         </div>
         <div className="bg-white dark:bg-[#1a2533] rounded-2xl shadow-sm hover:shadow-md transition p-6 flex flex-col border border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100 border-b pb-2 dark:border-gray-700">
-            {t("communicationWithAdmin")}
-          </h2>
-          <div className="flex-1 overflow-y-auto space-y-4 p-2 mb-3">
-            <div className="flex flex-col items-start">
-              <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl max-w-xs shadow-sm">
-                {data.admin_text || t("noMessages")}
-              </div>
-              <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                {t("admin")} (
-                {new Date(data.admin_deadline_time).toLocaleDateString()})
-              </span>
-            </div>
-            <div className="flex flex-col items-end">
-              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl max-w-xs shadow-sm">
-                {data.user_text || "—"}
-              </div>
-              <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                {t("you")} ({new Date(data.creat_at).toLocaleDateString()})
-              </span>
-            </div>
-          </div>
+  <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100 border-b pb-2 dark:border-gray-700">
+    {t("communicationWithAdmin")}
+  </h2>
+          <div className="space-y-4 p-2 mb-3">
+    <div className="flex flex-col items-start">
+      <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl max-w-xs shadow-sm break-words">
+        {data.admin_text || t("noMessages")}
+      </div>
+      <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+        {t("admin")} ({new Date(data.admin_deadline_time).toLocaleDateString()})
+      </span>
+    </div>
+
+    <div className="flex flex-col items-end">
+      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl max-w-xs shadow-sm break-words">
+        {data.user_text || "—"}
+      </div>
+      <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+        {t("you")} ({new Date(data.creat_at).toLocaleDateString()})
+      </span>
+    </div>
+  </div>
           {!["completed", "not_completed", "admin_approval", "expired_closed"].includes(data.application_status) && (
   <SendToAdminForm 
     application={data} 
