@@ -4,6 +4,7 @@ import AddOrganizationDrawer from "./AddOrganization";
 import EditOrganizationDrawer from "./OrganizationEdit";
 import DeleteOrganizationDrawer from "./OrganizationDelete";
 import { useTranslation } from "react-i18next";
+import WarningModal from "./WarningModal";
 
 interface Organization {
   id: number;
@@ -19,12 +20,33 @@ const OrganizationsTable: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+    const [warnings, setWarnings] = useState<any>({});
   const [selectedOrg, setSelectedOrg] = useState<{
     id: number;
     name: string;
   } | null>(null);
   const [theme, _setTheme] = useState(localStorage.getItem("theme") || "light");
 
+  useEffect(() => {
+    const fetchWarnings = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await axiosInstance.get("/admin/warning/apps", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.data) {
+          setWarnings(res.data);
+          setShowWarning(true);
+        }
+      } catch (err) {
+        console.error("Warning fetch error:", err);
+      }
+    };
+
+    fetchWarnings();
+  }, []);
   const fetchOrganizations = () => {
     axiosInstance
       .get("/organization/organization", { params: { page } })
@@ -54,7 +76,7 @@ const OrganizationsTable: React.FC = () => {
           ? "bg-[#101922] text-gray-100"
           : "bg-gray-50 text-gray-900"
       }`}
-    >
+    ><WarningModal open={showWarning} onClose={() => setShowWarning(false)} data={warnings} />
       <div className="flex justify-between items-center pb-3">
         <h1 className="text-2xl font-bold">{t("organizations")}</h1>
         <div className="flex items-center gap-4">
