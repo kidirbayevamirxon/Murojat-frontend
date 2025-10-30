@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { axiosInstance } from "@/api/api";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface DeleteOrganizationDrawerProps {
   open: boolean;
@@ -29,6 +30,7 @@ const DeleteOrganizationDrawer: React.FC<DeleteOrganizationDrawerProps> = ({
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
@@ -37,9 +39,14 @@ const DeleteOrganizationDrawer: React.FC<DeleteOrganizationDrawerProps> = ({
       toast.success(t("deleteSuccess"));
       onDeleted();
       onClose();
-    } catch (error) {
-      console.error(error);
-      toast.error(t("deleteError"));
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(t("deleteError"));
+        console.error("Delete error:", error);
+      }
     } finally {
       setLoading(false);
     }

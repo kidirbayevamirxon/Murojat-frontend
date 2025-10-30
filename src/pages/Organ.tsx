@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useTheme } from "@/context/theme-provider";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface Application {
   id: number;
@@ -77,8 +78,13 @@ export default function Organ() {
         : [];
       setApplications(apps);
       setTotalPages(data.pages || 1);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(t("fetchError"));
+      }
       setApplications([]);
     } finally {
       setLoading(false);

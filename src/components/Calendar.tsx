@@ -62,10 +62,10 @@ export default function Calendar() {
         <div className="grid grid-cols-7 gap-2 text-center text-sm">
           {allCells.map((day, i) =>
             day === null ? (
-              <div key={i} />
+              <div key={`empty-${i}`} />
             ) : (
               <div
-                key={day}
+                key={`day-${day}-${i}`}
                 className={`p-2 rounded-md cursor-pointer transition-all duration-200 ${
                   day === today.getDate()
                     ? "bg-blue-600 text-white font-semibold shadow-md scale-105"

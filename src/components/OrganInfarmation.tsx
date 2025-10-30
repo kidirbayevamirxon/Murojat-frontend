@@ -10,6 +10,8 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface ApplicationInfo {
   application_to_admin_id: number;
@@ -38,7 +40,7 @@ export default function OrganInfarmation() {
   const { id } = useParams();
   const app_id = Number(id);
   const [data, setData] = useState<ApplicationInfo | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!app_id) return;
     axiosInstance
@@ -48,18 +50,32 @@ export default function OrganInfarmation() {
           setData(res.data[0]);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          toast.error("Sessiya tugadi. Qayta tizimga kiring.");
+          navigate("/login");
+        } else {
+          console.error("Xato:", err);
+        }
+      });
   }, [app_id]);
 
   const fetchApplicationDetails = async () => {
     if (!app_id) return;
     try {
-      const res = await axiosInstance.get(`/organ/app_send_admin`, { params: { app_id } });
+      const res = await axiosInstance.get(`/organ/app_send_admin`, {
+        params: { app_id },
+      });
       if (Array.isArray(res.data) && res.data.length > 0) {
         setData(res.data[0]);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error("Sessiya tugadi. Qayta tizimga kiring.");
+        navigate("/login");
+      } else {
+        console.error("Xato:", err);
+      }
     }
   };
   if (!data)
@@ -187,35 +203,40 @@ export default function OrganInfarmation() {
           </div>
         </div>
         <div className="bg-white dark:bg-[#1a2533] rounded-2xl shadow-sm hover:shadow-md transition p-6 flex flex-col border border-gray-100 dark:border-gray-700">
-  <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100 border-b pb-2 dark:border-gray-700">
-    {t("communicationWithAdmin")}
-  </h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100 border-b pb-2 dark:border-gray-700">
+            {t("communicationWithAdmin")}
+          </h2>
           <div className="space-y-4 p-2 mb-3">
-    <div className="flex flex-col items-start">
-      <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl max-w-xs shadow-sm break-words">
-        {data.admin_text || t("noMessages")}
-      </div>
-      <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-        {t("admin")} ({new Date(data.admin_deadline_time).toLocaleDateString()})
-      </span>
-    </div>
+            <div className="flex flex-col items-start">
+              <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl max-w-xs shadow-sm break-words">
+                {data.admin_text || t("noMessages")}
+              </div>
+              <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                {t("admin")} (
+                {new Date(data.admin_deadline_time).toLocaleDateString()})
+              </span>
+            </div>
 
-    <div className="flex flex-col items-end">
-      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl max-w-xs shadow-sm break-words">
-        {data.user_text || "—"}
-      </div>
-      <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-        {t("you")} ({new Date(data.creat_at).toLocaleDateString()})
-      </span>
-    </div>
-  </div>
-          {!["completed", "not_completed", "admin_approval", "expired_closed"].includes(data.application_status) && (
-  <SendToAdminForm 
-    application={data} 
-    onSendSuccess={fetchApplicationDetails} 
-  />
-)}
-          
+            <div className="flex flex-col items-end">
+              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl max-w-xs shadow-sm break-words">
+                {data.user_text || "—"}
+              </div>
+              <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                {t("you")} ({new Date(data.creat_at).toLocaleDateString()})
+              </span>
+            </div>
+          </div>
+          {![
+            "completed",
+            "not_completed",
+            "admin_approval",
+            "expired_closed",
+          ].includes(data.application_status) && (
+            <SendToAdminForm
+              application={data}
+              onSendSuccess={fetchApplicationDetails}
+            />
+          )}
         </div>
       </div>
     </div>

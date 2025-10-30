@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const ApplicationInformation = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const ApplicationInformation = () => {
     const stored = localStorage.getItem("theme");
     return stored === "dark" ? "dark" : "light";
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -45,8 +47,10 @@ const ApplicationInformation = () => {
       } else {
         setApplication(null);
       }
-    } catch (err) {
-      console.error("Error fetching application details:", err);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        navigate("/login");
+      }
       setError(t("loadError"));
     }
   };
@@ -71,8 +75,10 @@ const ApplicationInformation = () => {
         if (Array.isArray(res.data)) {
           setOrgName(res.data[0]?.name || "");
         }
-      } catch (error) {
-        console.error("Error fetching organizations:", error);
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          navigate("/login");
+        }
       }
     };
     fetchOrgs();

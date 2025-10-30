@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import Calendar from "./Calendar";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface Applications {
   [key: string]: number;
@@ -33,13 +34,26 @@ export default function AdminStatisticsDetail() {
   const [org, setOrg] = useState<OrganizationDetail | null>(null);
 
   useEffect(() => {
-    axiosInstance.get("/admin/statistics").then((res) => {
-      const found = res.data.find(
-        (o: OrganizationDetail) => o.organization_id === Number(id)
-      );
-      setOrg(found);
-    });
-  }, [id]);
+    const fetchOrgStats = async () => {
+      try {
+        const res = await axiosInstance.get("/admin/statistics");
+        const found = res.data.find(
+          (o: OrganizationDetail) => o.organization_id === Number(id)
+        );
+        setOrg(found);
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          toast.error("Sessiya tugadi. Qayta tizimga kiring.");
+          navigate("/login");
+        } else {
+          toast.error("Ma'lumotlarni yuklashda xatolik yuz berdi.");
+          console.error("Statistics fetch error:", error);
+        }
+      }
+    };
+
+    if (id) fetchOrgStats();
+  }, [id, navigate]);
 
   if (!org)
     return (

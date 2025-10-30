@@ -3,6 +3,7 @@ import { Upload } from "lucide-react";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface Organization {
   id: number;
@@ -36,6 +37,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
   const [orgSuggestions, setOrgSuggestions] = useState<Organization[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setStatus(initialStatus);
@@ -56,8 +58,13 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
       } else {
         setOrgSuggestions([]);
       }
-    } catch (error) {
-      console.error("Error fetching organizations:", error);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        console.error("fetchOrganizations error:", error);
+      }
       setOrgSuggestions([]);
     }
   };
@@ -79,9 +86,14 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
       setOrgId(null);
       setDays(undefined);
       onSendSuccess();
-    } catch (err) {
-      console.error("Error sending application:", err);
-      toast.error(t("sendError"));
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(t("sendError"));
+        console.error("Send Organ error:", err);
+      }
     } finally {
       setLoading(false);
     }

@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface EditOrganizationDrawerProps {
   open: boolean;
@@ -34,6 +35,7 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -61,9 +63,14 @@ const EditOrganizationDrawer: React.FC<EditOrganizationDrawerProps> = ({
       toast.success(t("updateSuccess"));
       onUpdated();
       onClose();
-    } catch (error) {
-      console.error(error);
-      toast.error(t("updateError"));
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(t("updateError"));
+        console.error("Update error:", error);
+      }
     } finally {
       setLoading(false);
     }

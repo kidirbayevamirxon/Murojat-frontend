@@ -5,7 +5,8 @@ import EditOrganizationDrawer from "./OrganizationEdit";
 import DeleteOrganizationDrawer from "./OrganizationDelete";
 import { useTranslation } from "react-i18next";
 import WarningModal from "./WarningModal";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 interface Organization {
   id: number;
   name: string;
@@ -21,12 +22,13 @@ const OrganizationsTable: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
-    const [warnings, setWarnings] = useState<any>({});
+  const [warnings, setWarnings] = useState<any>({});
   const [selectedOrg, setSelectedOrg] = useState<{
     id: number;
     name: string;
   } | null>(null);
   const [theme, _setTheme] = useState(localStorage.getItem("theme") || "light");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWarnings = async () => {
@@ -40,8 +42,13 @@ const OrganizationsTable: React.FC = () => {
           setWarnings(res.data);
           setShowWarning(true);
         }
-      } catch (err) {
-        console.error("Warning fetch error:", err);
+      } catch (err: any) {
+        if (err.response?.status === 401) {
+          toast.error("Sessiya tugadi. Qayta tizimga kiring.");
+          navigate("/login");
+        } else {
+          console.error("Warning fetch error:", err);
+        }
       }
     };
 
@@ -55,8 +62,16 @@ const OrganizationsTable: React.FC = () => {
         setOrganizations(data);
         setPagination(response.data.pagination);
       })
-      .catch((error) => {
-        console.error("There was an error fetching the organizations!", error);
+      .catch((error: any) => {
+        if (error.response?.status === 401) {
+          toast.error("Sessiya tugadi. Qayta tizimga kiring.");
+          navigate("/login");
+        } else {
+          console.error(
+            "There was an error fetching the organizations!",
+            error
+          );
+        }
       });
   };
 
@@ -76,7 +91,12 @@ const OrganizationsTable: React.FC = () => {
           ? "bg-[#101922] text-gray-100"
           : "bg-gray-50 text-gray-900"
       }`}
-    ><WarningModal open={showWarning} onClose={() => setShowWarning(false)} data={warnings} />
+    >
+      <WarningModal
+        open={showWarning}
+        onClose={() => setShowWarning(false)}
+        data={warnings}
+      />
       <div className="flex justify-between items-center pb-3">
         <h1 className="text-2xl font-bold">{t("organizations")}</h1>
         <div className="flex items-center gap-4">

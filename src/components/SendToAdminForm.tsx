@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface SendToAdminFormProps {
   application: {
@@ -20,14 +21,14 @@ export default function SendToAdminForm({
   const { t } = useTranslation();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(application.application_status);
+  const [status, _setStatus] = useState(application.application_status);
   const [day, setDay] = useState<string>("");
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
   const [organFile, setOrganFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
   const [adminPhotos, setAdminPhotos] = useState<File[]>([]);
   const [extraFiles, setExtraFiles] = useState<File[]>([]);
-
+  const navigate = useNavigate();
   const handleSend = async () => {
     if (!application) {
       toast.error(t("noDataLoaded"));
@@ -58,8 +59,13 @@ export default function SendToAdminForm({
       setExtraFiles([]);
       onSendSuccess();
     } catch (err: any) {
-      console.error(err);
-      toast.error(err.response?.data?.detail || t("sendFailed"));
+      if (err.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(err.response?.data?.detail || t("sendFailed"));
+        console.error("Send error:", err);
+      }
     } finally {
       setLoading(false);
     }
@@ -101,9 +107,7 @@ export default function SendToAdminForm({
             <Input
               type="file"
               accept=".pdf,.doc,.docx"
-              onChange={(e) =>
-                setCitizenFile(e.target.files?.[0] || null)
-              }
+              onChange={(e) => setCitizenFile(e.target.files?.[0] || null)}
             />
           </div>
 
@@ -112,9 +116,7 @@ export default function SendToAdminForm({
             <Input
               type="file"
               accept=".pdf,.doc,.docx"
-              onChange={(e) =>
-                setOrganFile(e.target.files?.[0] || null)
-              }
+              onChange={(e) => setOrganFile(e.target.files?.[0] || null)}
             />
           </div>
 
@@ -123,9 +125,7 @@ export default function SendToAdminForm({
             <Input
               type="file"
               accept=".pdf,.doc,.docx,.zip"
-              onChange={(e) =>
-                setAdminExtraFile(e.target.files?.[0] || null)
-              }
+              onChange={(e) => setAdminExtraFile(e.target.files?.[0] || null)}
             />
           </div>
 
@@ -135,9 +135,7 @@ export default function SendToAdminForm({
               type="file"
               multiple
               accept="image/*"
-              onChange={(e) =>
-                setAdminPhotos(Array.from(e.target.files || []))
-              }
+              onChange={(e) => setAdminPhotos(Array.from(e.target.files || []))}
             />
           </div>
 
@@ -146,9 +144,7 @@ export default function SendToAdminForm({
             <Input
               type="file"
               multiple
-              onChange={(e) =>
-                setExtraFiles(Array.from(e.target.files || []))
-              }
+              onChange={(e) => setExtraFiles(Array.from(e.target.files || []))}
             />
           </div>
         </div>

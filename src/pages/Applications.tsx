@@ -4,6 +4,7 @@ import { axiosInstance } from "@/api/api";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export default function Applications() {
   const { t } = useTranslation();
@@ -71,9 +72,13 @@ export default function Applications() {
       );
 
       setApplications(transformedApps);
-    } catch (err) {
-      console.error("Error fetching applications:", err);
-      setError(t("failed"));
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        setError(t("failed"));
+      }
     } finally {
       setLoading(false);
     }

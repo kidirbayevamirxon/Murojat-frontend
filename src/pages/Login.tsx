@@ -35,7 +35,6 @@ const Login: React.FC = () => {
         window.location.href = "/";
       }
     } catch (err: any) {
-      console.error(err);
       toast.error(err.response?.data?.message || t("login_failed"));
     } finally {
       setLoading(false);
