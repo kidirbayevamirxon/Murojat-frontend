@@ -79,11 +79,15 @@ export default function AdminStatistics() {
 
   return (
     <div
-      className="p-6 min-h-screen transition-all"
-      style={{ backgroundColor: "#101922", color: "#E4E9F2" }}
+      className="
+        p-6 min-h-screen transition-colors duration-300
+        bg-gray-50 text-gray-900
+        dark:bg-[#101922] dark:text-[#E4E9F2]
+      "
     >
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-semibold text-[#E4E9F2]">
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-[#E4E9F2]">
           {t("organizationStatistics")}
         </h1>
         <Button
@@ -121,6 +125,8 @@ export default function AdminStatistics() {
           {t("exportExcel")}
         </Button>
       </div>
+
+      {/* Search */}
       <div className="mb-6 max-w-md relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
@@ -128,64 +134,48 @@ export default function AdminStatistics() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="
-            bg-[#1A2433] border border-[#2B3648]
-            text-[#E4E9F2] placeholder:text-gray-400
-            shadow-sm pl-10 pr-4 py-2
+            pl-10 pr-4 py-2
+            bg-white dark:bg-[#1A2433]
+            border border-gray-300 dark:border-[#2B3648]
+            text-gray-900 dark:text-[#E4E9F2]
+            placeholder:text-gray-400
             focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-            transition-all
+            shadow-sm transition-all
           "
         />
       </div>
+
+      {/* Table */}
       <Card
-        className="rounded-xl overflow-hidden border shadow-lg"
-        style={{ backgroundColor: "#1A2433", borderColor: "#2B3648" }}
+        className="
+          rounded-xl overflow-hidden border shadow-lg
+          bg-white border-gray-200
+          dark:bg-[#1A2433] dark:border-[#2B3648]
+        "
       >
         <CardContent className="p-0">
           {loading ? (
-            <div
-              className="p-6 text-center"
-              style={{ color: "#A0AEC0", backgroundColor: "#1A2433" }}
-            >
+            <div className="p-6 text-center text-gray-600 dark:text-[#A0AEC0] bg-gray-50 dark:bg-[#1A2433]">
               {t("loading")}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead style={{ backgroundColor: "#1F2A3A" }}>
-                  <tr className="text-gray-300 border-b border-[#2B3648]">
-                    <th className="py-4 px-4 text-left font-semibold text-[#E4E9F2] min-w-[200px]">
+                <thead className="bg-gray-100 dark:bg-[#1F2A3A]">
+                  <tr className="text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-[#2B3648]">
+                    <th className="py-4 px-4 text-left font-semibold min-w-[200px]">
                       {t("organizationName")}
                     </th>
-                    <th className="py-4 px-4 text-center text-yellow-400">
-                      {t("not_completed")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-blue-400">
-                      {t("pending")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-indigo-400">
-                      {t("sent_to_organ")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-green-400">
-                      {t("completed")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-purple-400">
-                      {t("review")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-emerald-400">
-                      {t("accepted")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-pink-400">
-                      {t("admin_approval")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-gray-400">
-                      {t("expired_closed")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-orange-400">
-                      {t("returned_to_organ")}
-                    </th>
-                    <th className="py-4 px-4 text-center text-blue-400 font-semibold">
-                      {t("total")}
-                    </th>
+                    <th className="py-4 px-4 text-center text-yellow-500">{t("not_completed")}</th>
+                    <th className="py-4 px-4 text-center text-blue-500">{t("pending")}</th>
+                    <th className="py-4 px-4 text-center text-indigo-400">{t("sent_to_organ")}</th>
+                    <th className="py-4 px-4 text-center text-green-500">{t("completed")}</th>
+                    <th className="py-4 px-4 text-center text-purple-400">{t("review")}</th>
+                    <th className="py-4 px-4 text-center text-emerald-400">{t("accepted")}</th>
+                    <th className="py-4 px-4 text-center text-pink-400">{t("admin_approval")}</th>
+                    <th className="py-4 px-4 text-center text-gray-400">{t("expired_closed")}</th>
+                    <th className="py-4 px-4 text-center text-orange-400">{t("returned_to_organ")}</th>
+                    <th className="py-4 px-4 text-center font-semibold text-blue-500">{t("total")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,37 +183,38 @@ export default function AdminStatistics() {
                     <tr>
                       <td
                         colSpan={11}
-                        className="text-center py-8 text-gray-400"
-                        style={{ backgroundColor: "#1A2433" }}
+                        className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#1A2433]"
                       >
                         {t("noOrganizations")}
                       </td>
                     </tr>
                   ) : (
-                    filtered.map((org, i) => (
+                    filtered.map((org) => (
                       <tr
                         key={org.organization_id}
                         onClick={() =>
                           navigate(`/statistics/${org.organization_id}`)
                         }
-                        className="cursor-pointer transition-all"
-                        style={{
-                          backgroundColor: i % 2 === 0 ? "#1A2433" : "#18212E",
-                        }}
+                        className="
+                          cursor-pointer transition-colors
+                          odd:bg-gray-50 even:bg-gray-100
+                          dark:odd:bg-[#1A2433] dark:even:bg-[#18212E]
+                          hover:bg-gray-200 dark:hover:bg-[#223042]
+                        "
                       >
-                        <td className="py-4 px-4 font-medium text-[#E4E9F2] hover:text-blue-400">
+                        <td className="py-4 px-4 font-medium">
                           {org.organization_name}
                         </td>
-                        <td className="py-4 px-4 text-center text-yellow-400">
+                        <td className="py-4 px-4 text-center text-yellow-500">
                           {org.applications.not_completed}
                         </td>
-                        <td className="py-4 px-4 text-center text-blue-400">
+                        <td className="py-4 px-4 text-center text-blue-500">
                           {org.applications.pending}
                         </td>
                         <td className="py-4 px-4 text-center text-indigo-400">
                           {org.applications.sent_to_organ}
                         </td>
-                        <td className="py-4 px-4 text-center text-green-400">
+                        <td className="py-4 px-4 text-center text-green-500">
                           {org.applications.completed}
                         </td>
                         <td className="py-4 px-4 text-center text-purple-400">
@@ -241,7 +232,7 @@ export default function AdminStatistics() {
                         <td className="py-4 px-4 text-center text-orange-400">
                           {org.applications.returned_to_organ}
                         </td>
-                        <td className="py-4 px-4 text-center font-bold text-blue-400">
+                        <td className="py-4 px-4 text-center font-bold text-blue-500">
                           {getTotal(org.applications)}
                         </td>
                       </tr>
@@ -253,6 +244,7 @@ export default function AdminStatistics() {
           )}
         </CardContent>
       </Card>
+
       {!loading && (
         <div className="mt-6">
           <Pagination

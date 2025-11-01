@@ -151,11 +151,11 @@ export default function Applications() {
             </button>
           ))}
         </div>
-        <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-[#2B3648] z-0" />
+        <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-[#F3F4F6] z-0" />
       </div>
       <div
         className="overflow-x-auto border rounded-lg"
-        style={{ borderColor: "#2B3648" }}
+        style={{ borderColor: "#DEDEDF" }}
       >
         <table className="min-w-full text-left text-sm border-separate border-spacing-y-2">
           <thead className="bg-gray-100 text-gray-900 dark:bg-[#1A2433] dark:text-[#E4E9F2]">
