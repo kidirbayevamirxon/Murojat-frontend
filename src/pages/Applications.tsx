@@ -86,7 +86,7 @@ export default function Applications() {
 
   useEffect(() => {
     fetchApplications();
-  }, [activeTab, t]);
+  }, [activeTab]);
 
   const filtered = applications.filter(
     (app) =>
@@ -97,8 +97,11 @@ export default function Applications() {
 
   return (
     <div
-      className="p-6 min-h-screen transition-colors"
-      style={{ backgroundColor: "#101922", color: "#E4E9F2" }}
+      className="
+      p-6 min-h-screen transition-colors 
+      bg-white text-gray-900 
+      dark:bg-[#101922] dark:text-[#E4E9F2]
+    "
     >
       <div className="flex justify-between items-center mb-4">
         <div>
@@ -113,12 +116,15 @@ export default function Applications() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="
-              w-full rounded-xl border border-[#2B3648] 
-              pl-10 pr-4 py-2.5 text-sm text-[#E4E9F2]
-              shadow-sm bg-[#1A2433] placeholder:text-gray-500
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-              transition-all duration-200 hover:border-blue-400
-            "
+            w-full rounded-xl border 
+            border-gray-300 dark:border-[#2B3648] 
+            pl-10 pr-4 py-2.5 text-sm 
+            text-gray-900 dark:text-[#E4E9F2]
+            bg-white dark:bg-[#1A2433]
+            placeholder:text-gray-400 dark:placeholder:text-gray-500
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+            transition-all duration-200 hover:border-blue-400
+          "
           />
         </div>
       </div>
@@ -152,7 +158,7 @@ export default function Applications() {
         style={{ borderColor: "#2B3648" }}
       >
         <table className="min-w-full text-left text-sm border-separate border-spacing-y-2">
-          <thead style={{ backgroundColor: "#1A2433", color: "#E4E9F2" }}>
+          <thead className="bg-gray-100 text-gray-900 dark:bg-[#1A2433] dark:text-[#E4E9F2]">
             <tr>
               <th className="px-4 py-3 font-semibold">{t("applicationId")}</th>
               <th className="px-4 py-3 font-semibold">{t("applicantName")}</th>
@@ -179,17 +185,20 @@ export default function Applications() {
                 <tr
                   key={app.id}
                   onClick={() => navigate(`/applications/info/${app.id}`)}
-                  className="cursor-pointer transition-colors duration-200 hover:bg-[#1F2A3A]"
-                  style={{
-                    backgroundColor: "#1A2433",
-                    borderRadius: "10px",
-                  }}
+                  className="
+              cursor-pointer transition-colors duration-200 
+              bg-white hover:bg-gray-100 
+              dark:bg-[#1A2433] dark:hover:bg-[#1F2A3A]
+              rounded-lg
+            "
                 >
-                  <td className="px-4 py-3 font-medium text-blue-400 rounded-l-lg">
+                  <td className="px-4 py-3 font-medium text-blue-500 rounded-l-lg">
                     APP-{app.id}
                   </td>
                   <td className="px-4 py-3">{app.name}</td>
-                  <td className="px-4 py-3 text-gray-300">{app.phone}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                    {app.phone}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={`text-xs font-semibold px-3 py-1 rounded-full`}
@@ -208,7 +217,7 @@ export default function Applications() {
                       {app.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-400 rounded-r-lg">
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-400 rounded-r-lg">
                     {app.date}
                   </td>
                 </tr>

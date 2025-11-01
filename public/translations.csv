@@ -1,0 +1,201 @@
+key,ru,uz,kaa
+settings.title,Настройки,Sozlamalar,Sozlamalar
+settings.appearance,Внешний вид,Kirish ko‘rinishi,Kirish ko‘rinishi
+settings.theme,Тема интерфейса,Interfeys mavzusi,Interfeys mavzusi
+settings.theme_desc,Выберите стиль интерфейса,Interfeys uslubini tanlang,Interfeys uslubini tanlang
+settings.localization,Локализация,Joylashuv,Joylashuv
+settings.language,Язык,Til,Til
+settings.language_desc,Выберите язык интерфейса приложения,Dastur interfeysi uchun tilni tanlang,Dastur interfeysi uchun tilni tanlang
+choose_language,Выберите язык,Tilni tanlang,Tilni tanlang
+select_language,Выберите язык,Tilni tanlang,Tilni tanlang
+Admin Panel,Панель администратора,Administrator paneli,Admınıstrator paneli
+applications,Заявки,Arizalar,Arizalar
+manageTrack,Управляйте и отслеживайте все заявки.,Barcha arizalarni boshqaring va kuzating.,Barlıq arizalardı basqarıń hám qadaǵalań.
+searchPlaceholder,Поиск заявок...,Arizalarni qidiring...,Arizalardı izlew...
+notCompleted,Не завершено,Tugallanmagan,Toliq emes
+pending,В ожидании,Jarayonda,Jarayonda
+sentToOrgan,Отправлено в организацию,Tashkilotga yuborilgan,Táskilatqa jiberilgen
+completed,Завершено,Tugallangan,Toliq bolǵan
+review,На рассмотрении,Ko‘rib chiqilmoqda,Qarap shıǵılmaqta
+accepted,Принято,Qabul qilingan,Qabıl etilgen
+adminApproval,Одобрение администратора,Administrator tasdig‘i,Admin tastıyıǵı
+returnedToOrgan,Возвращено в организацию,Tashkilotga qaytarilgan,Táskilatqa qaytarılǵan
+expiredClosed,Истек срок / Закрыто,Muddati o‘tgan / Yopilgan,Mánzili ótken / Jabılǵan
+loading,Загрузка заявок...,Arizalar yuklanmoqda...,Arizalar júklenip atır...
+failed,Не удалось загрузить заявки. Повторите попытку позже.,Arizalarni yuklab bo‘lmadi. Keyinroq urinib ko‘ring.,Arizalardı júklew múmkin emes. Keyin qayta urınıń.
+noApps,Заявки не найдены.,Arizalar topilmadi.,Ariza tabılmadı.
+applicantName,Имя заявителя,Ariza beruvchi,Ariza beriwshi
+phone,Телефон,Telefon,Telefon
+status,Статус,Holati,Háli
+submittedDate,Дата отправки,Yuborilgan sana,Jiberilgen sánesi
+applicationId,ID заявки,Ariza ID raqami,Ariza ID nomeri
+welcome_back,Добро пожаловать,Xush kelibsiz,Xosh keldiń
+signin_to_account,Войдите в свой аккаунт,Profilingizga kiring,Profilıńe kirıń
+username,Имя пользователя,Foydalanuvchi nomi,Paydalanıwshı atı
+password,Пароль,Parol,Parol
+remember_me,Запомнить меня,Eslab qolish,Estep qalıw
+forgot_password,Забыли пароль?,Parolni unutdingizmi?,Parolıńızdı umıtıp qaldıńız ba?
+login,Войти,Kirish,Kiriw
+logging_in,Вход...,Kirilmoqda...,Kiriw atında...
+fill_all_fields,"Пожалуйста, заполните все поля","Iltimos, barcha maydonlarni to‘ldiring",Barlıq orınlardı toldırıń
+login_success,Вход выполнен успешно!,Kirish muvaffaqiyatli!,Kiriw sátti ótildi!
+login_failed,Ошибка при входе,Kirishda xatolik yuz berdi,Kiriwde qátelik júz berdi
+organ_panel,Панель организации,Organ paneli,Organ paneli
+page_not_found,Страница не найдена,Sahifa topilmadi,Bet tabılmadı
+page_not_found_description,"Страница, которую вы ищете, не существует или была перемещена",Siz izlayotgan sahifa mavjud emas yoki ko‘chirib yuborilgan,Siz izlep atırǵan bet joq nemese jyljıtılǵan
+return_to_dashboard,Вернуться на главную,Asosiy oynaga qaytish,Bas betke qaytıw
+all_rights_reserved,Все права защищены,Barcha huquqlar himoyalangan,Barlıq huqıqlar qórǵalǵan
+applications,Заявки,Arizalar,Arızalar
+search_placeholder,Поиск по имени или ID,Ism yoki ID orqali qidirish,Atı nemese ID boyınsha izlew
+select_status,Выберите статус,Holatni tanlang,Status saylań
+application_id,ID заявки,Ariza ID,Arıza ID
+applicant_name,Имя заявителя,Arizachi ismi,Arıza beriwshi atı
+phone_number,Номер телефона,Telefon raqami,Telefon nomeri
+status,Статус,Holat,Status
+date_submitted,Дата отправки,Yuborilgan sana,Jiberilgen sáná
+loading,Загрузка...,Yuklanmoqda...,Jüklenip atır...
+no_results,Результаты не найдены,Natijalar topilmadi,Nátiyje tabılmadı
+showing_results,Показано {count} из {total},{count} ta dan {total} tasi ko‘rsatilmoqda,{count} dan {total} körsetilmekte
+pending,В ожидании,Kutilmoqda,Kútile atır
+not_completed,Не завершено,Tugallanmagan,Tólendirilmegen
+sent_to_organ,Отправлено в орган,Organlarga yuborilgan,Organga jiberilgen
+completed,Завершено,Yakunlangan,Tamam bolǵan
+review,На рассмотрении,Ko‘rib chiqilmoqda,Qaralmaqta
+accepted,Принято,Qabul qilingan,Qabıl etilgen
+admin_approval,Одобрение администратора,Administrator tasdiqlashi,Admin tastıyqlawı
+expired_closed,Истек срок,Muddati o‘tgan,Mólet u‘tip ketken
+returned_to_organ,Возвращено в орган,Organga qaytarilgan,Organga qaytarılǵan
+applications,Заявки,Arizalar,Arzalar
+searchPlaceholder,Поиск по имени или ID,Ism yoki ID bo'yicha qidirish,At yamasa ID boyınsha qıdırıw
+selectStatus,Выберите статус,Statusni tanlang,Statusni saylań
+applicationId,ID ЗАЯВКИ,ARIZA ID,ARIZA ID
+applicantName,ИМЯ ЗАЯВИТЕЛЯ,ARIZA BERUVCHI ISMI,Arza Beriuvchi atı
+phoneNumber,НОМЕР ТЕЛЕФОНА,TELEFON RAQAMI,Telefon nomeri
+status,СТАТУС,STATUS,STATUS
+dateSubmitted,ДАТА ПОДАЧИ,TO'LOV SANASI,Tólew sánesi
+loading,Загрузка...,Yuklanmoqda...,Júklenip atır...
+noResults,Ничего не найдено,Hech narsa topilmadi,Hesh nárse tabılmadı
+showingResults,Показано {{filtered}} из {{total}} результатов,{{filtered}} ta natija {{total}} tadan,{{filtered}} ta nátiyje {{total}} den
+pending,Ожидание,Kutilmoqda,Kútilip atır
+not_completed,Не завершено,Yakunlanmagan,Juwmaqlanbaǵan
+sent_to_organ,Отправлено в организацию,Tashkilotga yuborilgan,Shólkemge jiberilgen
+completed,Завершено,Yakunlangan,Juwmaqlanǵan
+review,На рассмотрении,Ko'rib chiqilmoqda,Kórip shigılıp atır
+accepted,Принято,Qabul qilindi,Qabıllandı
+admin_approval,Подтверждение администратора,Admin tasdigi,Admin tasdigi
+expired_closed,Истекший и завершенный,Muddati tugap bajarilgan,Múddeti tugap orınlanǵan 
+returned_to_organ,Возвращено в организацию,Tashkilotga qaytarilgan,Shólkemge qaytarılǵan
+organizationStatistics,Статистика организаций,Tashkilotlar statistikasi,Shólkemler statistikası
+exportExcel,Экспорт в Excel,Excel ga eksport,Excel ge eksport
+exportError,Ошибка экспорта,Eksportda xatolik,Eksportda qátelik
+searchOrganization,Поиск по названию организации,Tashkilot nomi bo'yicha qidirish,Shólkem atı boyınsha qıdırıw
+organizationName,НАЗВАНИЕ ОРГАНИЗАЦИИ,TASHKILOT NOMI,TASHKILOT NOMI
+total,ВСЕГО,JAMI,JAMI
+noOrganizations,Организации не найдены,Tashkilotlar topilmadi,Shólkemler tabılmadı
+adminPanel,Админ панель,Admin panel,Admin panel
+organizations,Организации,Tashkilotlar,Shólkemler
+applications,Заявки,Arizalar,Arzalar
+statistics,Статистика,Statistika,Statistika
+settings,Настройки,Sozlamalar,Sazlamalar
+logOut,Выйти,Chiqish,Shıǵıw
+organPanel	,Панель организации	,Tashkilot paneli,Shólkem paneli
+back,Назад,Orqaga,Artqa
+applicationStatisticsFor,Статистика заявок для организации:,Tashkilot uchun ariza statistikasi:,Shólkem ushın arza statistikası :
+applicationStatusDistribution,Распределение статусов заявок,Ariza holatlari taqsimoti,Arza jaǵdayları bólistiriwi
+applicationStatusDetails,Детали статусов заявок,Ariza holatlari tafsilotlari,Arza jaǵdayları tolıq maǵlıwmatları
+percentage,Процент,Foiz,Procent
+applicationBreakdown,Состав статусов заявок,Ariza holatlari tarkibi,Arza jaǵdayları quramı
+sendToOrgan,Отправить в организацию,Tashkilotga yuborish,Shólkemge jiberiw
+messageText,Текст сообщения,Xabar matni,Xabar teksti
+writeMessageToOrgan,Напишите сообщение организации...,Tashkilotga xabar yozing...,Shólkemge xabar jazıń...
+days,Дни,Kunlar,Kún
+organization,Организация,Tashkilot,Shólkem
+enterOrganizationName,Введите название организации...,Tashkilot nomini kiriting...,Shólkem atınıń kiritiń...
+sending,Отправляется...,Yuborilmoqda...,Jiberilip atır...
+sendToOrganButton,Отправить в организацию,Tashkilotga yuborish,Shólkemge jiberiw
+currentOrganInfo,Текущая информация организации,Joriy tashkilot ma'lumoti,Ámeldegi shólkem maǵlıwmatı
+organText,Текст организации,Tashkilot matni,Shólkem teksti
+organDeadline,Срок организации,Tashkilot muddati,Shólkem múddeti
+sendSuccess,Заявка успешно отправлена!,Ariza muvaffaqiyatli yuborildi!,Arza tabıslı jiberildi!
+sendError,Ошибка при отправке заявки!,Ariza yuborishda xatolik!,Arza jiberiwde qátelik!
+previous,Предыдущий,Oldingi,Aldınǵı
+next,Следующий,Keyingi,Keyingi
+addOrganization,Добавить организацию,Tashkilot qo'shish,Shólkem qosıw
+name,Название,Nomi,Atı
+actions,Действия,Harakatlar,Háreketler
+delete,Удалить,O'chirish,Óshiriw
+edit,Редактировать,Tahrirlash,Redaktorlaw
+pageInfo,Страница {{current}} из {{total}},{{current}} sahifa {{total}} dan,{{current}} bet {{total}} den
+editOrganization,Редактировать организацию,Tashkilotni tahrirlash,Shólkemdi redaktorlaw
+fillAllFields,"Пожалуйста, заполните все поля","Iltimos, barcha maydonlarni to'ldiring","Iltimas, barlıq maydanlardı toldırıń"
+updateSuccess,Организация успешно обновлена!,Tashkilot muvaffaqiyatli yangilandi!,Shólkem tabıslı jańalandı!
+updateError,Ошибка при обновлении организации,Tashkilotni yangilashda xatolik,Shólkemdi jańalawda qátelik
+password,Пароль,Parol,Parol
+enterPassword,Введите пароль,Parolni kiriting,Paroldı kiritiń
+cancel,Отмена,Bekor qilish,Bıykarlaw
+saving,Сохранение...,Saqlanmoqda...,Saqlanıp atır...
+saveChanges,Сохранить изменения,O'zgarishlarni saqlash,Ózgerislerdi saqlaw
+deleteOrganization,Удалить организацию,Tashkilotni o'chirish,Shólkemdi óshiriw
+deleteSuccess,Организация успешно удалена!,Tashkilot muvaffaqiyatli o'chirildi!,Shólkem tabıslı óshirildi!
+deleteError,Ошибка при удалении организации,Tashkilotni o'chirishda xatolik,Shólkemdi óshiriwde qátelik
+deleteConfirmation,"Вы уверены, что хотите удалить организацию?",Tashkilotni o'chirishni istaysizmi?,Shólkemdi óshiriwdi qáleysizbe?
+cannotBeUndone,Это действие нельзя отменить.,Bu harakatni bekor qilib bo'lmaydi.,Bul háreketti biykar etip bolmaydı.
+deleting,Удаление...,O'chirilmoqda...,Óshirilip atır...
+noDataLoaded,Данные еще не загружены!,Ma'lumotlar hali yuklanmadi!,Maǵlıwmatlar ele júklenbedi!
+messageSentSuccess,Сообщение успешно отправлено!,Xabar muvaffaqiyatli yuborildi!,Xabar tabıslı jiberildi!
+sendFailed,Ошибка при отправке сообщения,Xabar yuborishda xatolik,Xabar jiberiwde qátelik
+applicationDetails,Детали заявки,Ariza tafsilotlari,Arza tolıq maǵlıwmatları
+backToList,Вернуться к списку,Ro'yxatga qaytish,Dizimge qaytıw
+applicationInformation,Информация о заявке,Ariza ma'lumotlari,Arza maǵlıwmatları
+fullName,Полное имя,To'liq ism,Tolıq at
+additionalPhone,Дополнительный телефон,Qo'shimcha telefon,Qosımsha telefon
+quarter,Квартал,Mahalla,Máhelle
+createdAt,Дата создания,Yaratilgan vaqti,Jaratılǵan waqtı
+sentTime,Время отправки,Yuborilgan vaqti,Jiberilgen waqtı
+adminDeadline,Срок администратора,Admin muddati,Admin múddeti
+daysSince,Дней прошло,Kunlar soni,Kún sanı
+days,дней,Kun,Kún
+userApplicationText,Текст заявки пользователя,Foydalanuvchi ariza matni,Paydalanıwshı arza teksti
+noApplicationText,Текст заявки не предоставлен,Ariza matni kiritilmagan,Arza teksti kiritilmegen
+adminResponseText,Текст ответа администратора,Admin javob matni,Admin juwap teksti
+noAdminResponse,Ответ администратора еще нет,Admin javobi hali yo'q,Admin juwabı ele joq
+communicationWithAdmin,Общение с администратором,Admin bilan muloqot,Admin menen baylanıs
+noMessages,Сообщений пока нет,Xabarlar hali yo'q,Xabarlar ele joq
+admin,Администратор,Admin,Admin
+you,Вы,Siz,Siz
+citizenFile,Файл гражданина,Fuqaro fayli,Puqara faylı
+adminExtraFile,Дополнительный файл администратора,Admin qo'shimcha fayli,Admin qosımsha faylı
+adminPhotos,Фотографии администратора,Admin rasmlari,Admin súwretleri
+typeYourMessage,Введите ваше сообщение...,Xabaringizni yozing...,Xabarıńızdı jazıń...
+daysOfWeek,"В, П, В, С, Ч, П, С","Y, D, S, Ch, P, J, Sh","Y, D, S, Ch, P, J, Sh"
+addSuccess,Организация успешно добавлена!,Tashkilot muvaffaqiyatli qo'shildi!,Shólkem tabıslı qosıldı!
+addError,Ошибка при добавлении организации,Tashkilot qo'shishda xatolik,Shólkem qosıwda qátelik
+save,Сохранить,Saqlash,Saqlaw
+loadError,Ошибка загрузки данных,Ma'lumotlarni yuklashda xatolik,Maǵlıwmatlardı júklewde qátelik
+view,Просмотр,Ko'rish,Kóriw
+applicantInformation,Информация о заявителе,Arizachi ma'lumotlari,Arzashı maǵlıwmatları
+downloadWord,Скачать Word,Word yuklab olish,Word júklep alıw
+downloadPDF,Скачать PDF,PDF yuklab olish,PDF júklep alıw
+history,История,Tarix,Tariyx
+applicationCreated,Заявка создана,Ariza yaratildi,Arza jaratıldı
+sentToOrgan,Отправлено в организацию,Tashkilotga yuborildi,Shólkemge jiberildi
+deadline,Срок,Muddati,Múddeti
+textInformation,Текстовая информация,Matn ma'lumotlari,Tekst maǵlıwmatları
+userText,Текст пользователя,Foydalanuvchi matni,Paydalanıwshı teksti
+noUserText,Текст пользователя не предоставлен,Foydalanuvchi matni kiritilmagan,Paydalanıwshı teksti kiritilmegen
+adminText,Текст администратора,Admin matni,Admin teksti
+noAdminText,Текст администратора не предоставлен,Admin matni kiritilmagan,Admin teksti kiritilmegen
+organText,Текст организации,Tashkilot matni,Shólkem teksti
+noOrganText,Текст организации не предоставлен,Tashkilot matni kiritilmagan,Shólkem teksti kiritilmegen
+attachments,Вложения,Ilovalar,Qosımshalar
+mainFile,Основной файл,Asosiy fayl,Tiykarǵı fayl
+mainFileDescription,"Основной файл, загруженный гражданином",Fuqaro tomonidan asosiy yuklangan fayl,Puqara tárepinen tiykarǵı júklengen fayl
+citizenFile,Файл гражданина,Fuqaro fayli,Puqara faylı
+citizenFileDescription,"Файл, загруженный гражданином",Fuqaro tomonidan yuklangan fayl,Puqara tárepinen júklengen fayl
+adminExtraFile,Дополнительный файл администратора,Admin qo'shimcha fayli,Admin qosımsha faylı
+adminExtraFileDescription,"Дополнительный файл, загруженный администратором",Admin tomonidan qo'shimcha fayl,Admin tárepinen qosımsha fayl
+adminPhoto,Фото администратора,Admin rasmi,Admin suwreti
+adminPhotoDescription,"Фотография, загруженная администратором",Admin tomonidan yuklangan rasm,Admin tárepinen júklengen súwret
+noAttachments,Вложения отсутствуют,Ilovalar mavjud emas,Qosımshalar joq
+download,Скачать,Yuklab olish,Júklep alıw
+close,Закрыть,Yopish,Jabıw
