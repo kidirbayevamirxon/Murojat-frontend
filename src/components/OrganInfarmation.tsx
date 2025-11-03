@@ -33,6 +33,8 @@ interface ApplicationInfo {
   citizen_file: string | null;
   admin_extra_file: string | null;
   admin_photos: string[];
+  inn: string;
+  personal_buzines_name: string;
 }
 
 export default function OrganInfarmation() {
@@ -121,6 +123,18 @@ export default function OrganInfarmation() {
                 </span>{" "}
                 {data.phone}
               </p>
+              <p className="text-gray-600 dark:text-gray-300">
+                <span className="font-medium text-gray-600 dark:text-gray-400">
+                  {t("inn")}:
+                </span>{" "}
+                {data.inn}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300">
+                <span className="font-medium text-gray-600 dark:text-gray-400">
+                  {t("personal_buzines_name")}:
+                </span>{" "}
+                {data.personal_buzines_name}
+              </p>
               {data.additional_phone && (
                 <p className="text-gray-600 dark:text-gray-300">
                   <span className="font-medium text-gray-600 dark:text-gray-400">
@@ -187,16 +201,30 @@ export default function OrganInfarmation() {
                 <AccordionTrigger className="font-semibold text-gray-800 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300">
                   {t("userApplicationText")}
                 </AccordionTrigger>
-                <AccordionContent className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                  {data.user_text || t("noApplicationText")}{" "}
+                <AccordionContent
+                  className="
+          text-gray-600 dark:text-gray-300 text-sm leading-relaxed 
+          break-words whitespace-pre-wrap 
+          max-h-[300px] overflow-y-auto 
+          p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50
+        "
+                >
+                  {data.user_text || t("noApplicationText")}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="admin">
                 <AccordionTrigger className="font-semibold text-gray-800 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300">
                   {t("adminResponseText")}
                 </AccordionTrigger>
-                <AccordionContent className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                  {data.admin_text || t("noAdminResponse")}{" "}
+                <AccordionContent
+                  className="
+          text-gray-600 dark:text-gray-300 text-sm leading-relaxed 
+          break-words whitespace-pre-wrap 
+          max-h-[300px] overflow-y-auto 
+          p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50
+        "
+                >
+                  {data.admin_text || t("noAdminResponse")}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -208,7 +236,7 @@ export default function OrganInfarmation() {
           </h2>
           <div className="space-y-4 p-2 mb-3">
             <div className="flex flex-col items-start">
-              <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl max-w-xs shadow-sm break-words">
+              <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 rounded-xl shadow-sm break-words w-full sm:w-auto max-w-full md:max-w-[80%] overflow-wrap-anywhere">
                 {data.admin_text || t("noMessages")}
               </div>
               <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
@@ -216,15 +244,14 @@ export default function OrganInfarmation() {
                 {new Date(data.admin_deadline_time).toLocaleDateString()})
               </span>
             </div>
-
-            <div className="flex flex-col items-end">
-              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl max-w-xs shadow-sm break-words">
+            {/* <div className="flex flex-col items-end">
+              <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 p-3 rounded-xl shadow-sm break-words w-full sm:w-auto max-w-full md:max-w-[90%] overflow-wrap-anywhere">
                 {data.user_text || "—"}
               </div>
               <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {t("you")} ({new Date(data.creat_at).toLocaleDateString()})
               </span>
-            </div>
+            </div> */}
           </div>
           {![
             "completed",

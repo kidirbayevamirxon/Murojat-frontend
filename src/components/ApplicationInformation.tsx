@@ -204,6 +204,22 @@ const ApplicationInformation = () => {
                     </tr>
                     <tr className="border-b border-gray-100 dark:border-gray-700">
                       <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
+                        {t("inn")}
+                      </td>
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
+                        {application.inn}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
+                        {t("personal_buzines_name")}
+                      </td>
+                      <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
+                        {application.personal_buzines_name}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">
                         {t("phone")}
                       </td>
                       <td className="py-3 px-2 text-gray-800 dark:text-gray-100">
