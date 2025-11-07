@@ -277,7 +277,8 @@ const ApplicationInformation = () => {
                     <button
                       onClick={async () => {
                         const lang = localStorage.getItem("lang") || "uz";
-                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/${application.id}/export-word?lang=${lang}`;
+                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/${application.application_id}/export-word?lang=${lang}`;
+
 
                         const response = await fetch(url, {
                           headers: { "ngrok-skip-browser-warning": "true" },
@@ -305,7 +306,7 @@ const ApplicationInformation = () => {
                     </button>
                     <button
                       onClick={async () => {
-                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/files/pdf-no-org?app_id=${application.id}`;
+                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/files/pdf-no-org?app_id=${application.application_id}`;
 
                         const response = await fetch(url, {
                           headers: { "ngrok-skip-browser-warning": "true" },

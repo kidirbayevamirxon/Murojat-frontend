@@ -204,3 +204,19 @@ inn,ИНН,INN,INN
 personal_buzines_name,Название личного бизнеса,Shaxsiy biznes nomi,Jeke biznes at
 status_tanlash,Выберите статус,Status tanlang,Status saylań
 successfully_sent,Отправлено успешно,Muvaffaqiyatli yuborildi,Tabıslı jiberildi
+warningTitle,Предупреждение,Ogohlantirish,Eskertiw
+warningDescription,Критические статусы заявок требуют вашего внимания.,Muhim ariza holatlari diqqatni talab qiladi.,Muhim ariza jaǵdayları sizdiń nazarǵa alınıwın talab etedi.
+status,Статус,Holat,Jaǵday
+category,Категория,Turkum,Tur
+count,Количество,Soni,Sani
+pending,В ожидании,Kutilmoqda,Kútiledi
+accepted,Принято,Qabul qilingan,Qabillanǵan
+totalPending,Всего в ожидании,Jami kutilayotganlar,Jami kútilediwshiler
+totalAccepted,Всего принято,Jami qabul qilingan,Jami qabillanǵan
+sentToOrgan,Отправлено в организацию,Tashkilotga yuborilgan,Uyımǵa jiberilgen
+review,На рассмотрении,Ko‘rib chiqilmoqda,Qaralıp atır
+today,Сегодня,Bugun,Búgin
+tomorrow,Завтра,Ertaga,Ertende
+within5Days,В течение 5 дней,5 kun ichida,5 kún ishinde
+within15Days,В течение 15 дней,15 kun ichida,15 kún ishinde
+close,Закрыть,Yopish,Jabıw

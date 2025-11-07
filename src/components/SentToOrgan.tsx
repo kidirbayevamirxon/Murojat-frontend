@@ -28,21 +28,21 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
   onSendSuccess,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const [text, setText] = useState("");
-  const [days, setDays] = useState<number | undefined>(0);
+  const [days, setDays] = useState<number | undefined>();
   const [status, setStatus] = useState(initialStatus);
-  const [statuss, setStatuss] = useState<string>();
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [orgName, setOrgName] = useState("");
   const [orgId, setOrgId] = useState<number | null>(null);
   const [orgSuggestions, setOrgSuggestions] = useState<Organization[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    setStatus(initialStatus);
-  }, [initialStatus]);
+  useEffect(() => setStatus(initialStatus), [initialStatus]);
 
+  /** 🔍 Tashkilotlarni nomi orqali qidirish */
   const fetchOrganizations = async (query: string) => {
     if (!query.trim()) {
       setOrgSuggestions([]);
@@ -50,45 +50,39 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
     }
 
     try {
-      const res = await axiosInstance.get(
-        `/admin/send_organ/get_orgs?org_name=${query}`
-      );
-      if (Array.isArray(res.data)) {
-        setOrgSuggestions(res.data);
-      } else {
-        setOrgSuggestions([]);
-      }
+      const res = await axiosInstance.get(`/admin/send_organ/get_orgs?org_name=${query}`);
+      setOrgSuggestions(Array.isArray(res.data) ? res.data : []);
     } catch (error: any) {
       if (error.response?.status === 401) {
         toast.error(t("sessionExpired"));
         navigate("/login");
       } else {
         console.error("fetchOrganizations error:", error);
+        toast.error(t("fetchError"));
       }
-      setOrgSuggestions([]);
     }
   };
 
+  /** 📤 Arizani tashkilotga yuborish */
   const handleSendOrgan = async () => {
-    if (!application || !statuss) {
-      toast.error(t("selectStatusWarning"));
-      return;
-    }
+    if (!selectedStatus) return toast.error(t("selectStatusWarning"));
+    if (!orgId) return toast.error(t("selectOrganizationWarning"));
+
     try {
       setLoading(true);
       await axiosInstance.post("/admin/send_organ", {
         application_id: application.application_id,
-        org_id: Number(orgId),
+        org_id: orgId,
         text,
-        status: statuss,
+        status: selectedStatus,
         days: Number(days),
       });
       toast.success(t("sendSuccess"));
       setText("");
-      setOrgId(null);
-      setOrgName("");
       setDays(undefined);
-      setStatuss("");
+      setOrgName("");
+      setOrgId(null);
+      setSelectedStatus("");
       onSendSuccess();
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -102,161 +96,124 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
     }
   };
 
+  /** 📅 Sanani formatlash */
   const formatDateTime = (dateString: string) => {
     if (!dateString) return "—";
     const date = new Date(dateString);
     return date.toLocaleString("en-GB");
   };
 
+  /** 🔄 Status variantlarini aniqlash */
+  const getStatusOptions = () => {
+    switch (status) {
+      case "pending":
+      case "review":
+        return ["sent_to_organ", "not_completed"];
+      case "admin_approval":
+        return ["completed", "returned_to_organ", "not_completed"];
+      case "sent_to_organ":
+      case "not_completed":
+      default:
+        return ["sent_to_organ", "not_completed"];
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden h-fit transition-colors">
+    <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+      {/* Header */}
       <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           {t("sendToOrgan")}
         </h2>
       </div>
+
+      {/* Body */}
       <div className="p-5 space-y-4">
-        {(status === "pending" ||
-          status === "admin_approval" ||
-          status === "sent_to_organ" ||
-          status === "completed" ||
-          status === "accepted" ||
-          status === "returned_to_organ") && (
+        {/* Xabar matni */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {t("messageText")}
+          </label>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t("writeMessageToOrgan")}
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+          />
+        </div>
+        {/* Kunlar va Status */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t("messageText")}
+              {t("days")}
             </label>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder={t("writeMessageToOrgan")}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+            <input
+              type="number"
+              value={days || ""}
+              onChange={(e) => setDays(Number(e.target.value))}
+              placeholder="0"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
             />
           </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-3">
-          {status !== "admin_approval" && status !== "not_completed" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t("days")}
-              </label>
-              <input
-                type="text"
-                value={days || ""}
-                onChange={(e) => setDays(Number(e.target.value))}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-              />
-            </div>
-          )}
-
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("status")}
             </label>
             <select
-              value={statuss || ""}
-              onChange={(e) => setStatuss(e.target.value)}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
             >
-              {status === "pending" && (
-                <>
-                  <option value="">{t("status_tanlash")}</option>
-                  <option value="sent_to_organ">{t("sent_to_organ")}</option>
-                  <option value="not_completed">{t("not_completed")}</option>
-                </>
-              )}
-
-              {status === "not_completed" && (
-                <>
-                  <option value="">{t("status_tanlash")}</option>
-                  <option value="not_completed">{t("not_completed")}</option>
-                  <option value="sent_to_organ">{t("sent_to_organ")}</option>
-                </>
-              )}
-
-              {status === "sent_to_organ" && (
-                <>
-                  <option value="">{t("status_tanlash")}</option>
-                  <option value="sent_to_organ">{t("sent_to_organ")}</option>
-                  <option value="not_completed">{t("not_completed")}</option>
-                </>
-              )}
-            </select>
-          </div>
-          {status === "review" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t("status")}
-              </label>
-              <select
-                value={statuss}
-                onChange={(e) => setStatuss(e.target.value)}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-              >
-                <option value="">{t("status_tanlash")}</option>
-                <option value="not_completed">{t("not_completed")}</option>
-                <option value="sent_to_organ">{t("sent_to_organ")}</option>
-              </select>
-            </div>
-          )}
-          {status === "admin_approval" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t("status")}
-              </label>
-
-              <select
-                value={statuss}
-                onChange={(e) => setStatuss(e.target.value)}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-              >
-                <option value="completed">{t("completed")}</option>
-                <option value="returned_to_organ">
-                  {t("returned_to_organ")}
+              <option value="">{t("status_tanlash")}</option>
+              {getStatusOptions().map((opt) => (
+                <option key={opt} value={opt}>
+                  {t(opt)}
                 </option>
-                <option value="not_completed">{t("not_completed")}</option>
-              </select>
-            </div>
-          )}
-          <div className="relative col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t("organization")}
-            </label>
-            <input
-              type="text"
-              value={orgName}
-              onChange={(e) => {
-                const value = e.target.value;
-                setOrgName(value);
-                setShowSuggestions(true);
-                fetchOrganizations(value);
-              }}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              placeholder={t("enterOrganizationName")}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-            />
-
-            {showSuggestions && orgSuggestions.length > 0 && (
-              <ul className="absolute z-50 bg-white dark:bg-[#1a2533] border border-gray-200 dark:border-gray-700 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
-                {orgSuggestions.map((org) => (
-                  <li
-                    key={org.id}
-                    onClick={() => {
-                      setOrgName(org.name);
-                      setOrgId(org.id);
-                      setShowSuggestions(false);
-                    }}
-                    className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition"
-                  >
-                    {org.name}
-                  </li>
-                ))}
-              </ul>
-            )}
+              ))}
+            </select>
           </div>
         </div>
 
+        {/* Tashkilot nomi */}
+        <div className="relative">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {t("organization")}
+          </label>
+          <input
+            type="text"
+            value={orgName}
+            onChange={(e) => {
+              const val = e.target.value;
+              setOrgName(val);
+              setShowSuggestions(true);
+              fetchOrganizations(val);
+            }}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            placeholder={t("enterOrganizationName")}
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+          />
+
+          {/* Autocomplete list */}
+          {showSuggestions && orgSuggestions.length > 0 && (
+            <ul className="absolute z-50 bg-white dark:bg-[#1a2533] border border-gray-200 dark:border-gray-700 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
+              {orgSuggestions.map((org) => (
+                <li
+                  key={org.id}
+                  onClick={() => {
+                    setOrgName(org.name);
+                    setOrgId(org.id);
+                    setShowSuggestions(false);
+                  }}
+                  className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition"
+                >
+                  {org.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Yuborish tugmasi */}
         <button
           onClick={handleSendOrgan}
           disabled={loading}
@@ -266,6 +223,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
           {loading ? t("sending") : t("sendToOrganButton")}
         </button>
 
+        {/* Hozirgi holat */}
         {application.organ_text && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
