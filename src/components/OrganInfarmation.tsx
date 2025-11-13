@@ -258,7 +258,6 @@ export default function OrganInfarmation() {
             "not_completed",
             "admin_approval",
             "expired_closed",
-            "accepted",
           ].includes(data.application_status) && (
             <SendToAdminForm
               application={data}

@@ -273,66 +273,82 @@ const ApplicationInformation = () => {
                     </span>
                     {getStatusBadge(application.application_status)}
                   </div>
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={async () => {
-                        const lang = localStorage.getItem("lang") || "uz";
-                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/${application.application_id}/export-word?lang=${lang}`;
+                  {["completed", "admin_approval"].includes(
+                    application.application_status
+                  ) && (
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const lang = localStorage.getItem("lang") || "uz";
+                            const url = `/admin/${application.application_id}/export-word?lang=${lang}`;
 
+                            const response = await axiosInstance.get(url, {
+                              responseType: "blob",
+                              headers: { "ngrok-skip-browser-warning": "true" },
+                            });
 
-                        const response = await fetch(url, {
-                          headers: { "ngrok-skip-browser-warning": "true" },
-                        });
-                        const blob = await response.blob();
-                        const contentDisposition = response.headers.get(
-                          "content-disposition"
-                        );
-                        const filenameMatch =
-                          contentDisposition?.match(/filename="?([^"]+)"?/);
-                        const filename = filenameMatch
-                          ? filenameMatch[1]
-                          : "application.docx";
+                            const contentDisposition =
+                              response.headers["content-disposition"];
+                            const filenameMatch =
+                              contentDisposition?.match(/filename="?([^"]+)"?/);
+                            const filename = filenameMatch
+                              ? filenameMatch[1]
+                              : "application.docx";
 
-                        const link = document.createElement("a");
-                        link.href = URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      }}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-                    >
-                      {t("downloadWord")}
-                    </button>
-                    <button
-                      onClick={async () => {
-                        const url = `https://f2f2a56a78e0.ngrok-free.app/admin/files/pdf-no-org?app_id=${application.application_id}`;
+                            const blob = new Blob([response.data]);
+                            const link = document.createElement("a");
+                            link.href = URL.createObjectURL(blob);
+                            link.download = filename;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          } catch (error) {
+                            console.error(
+                              "Word yuklab olishda xatolik:",
+                              error
+                            );
+                          }
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                      >
+                        {t("downloadWord")}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const url = `/admin/files/pdf-no-org?app_id=${application.application_id}`;
 
-                        const response = await fetch(url, {
-                          headers: { "ngrok-skip-browser-warning": "true" },
-                        });
-                        const blob = await response.blob();
-                        const contentDisposition = response.headers.get(
-                          "content-disposition"
-                        );
-                        const filenameMatch =
-                          contentDisposition?.match(/filename="?([^"]+)"?/);
-                        const filename = filenameMatch
-                          ? filenameMatch[1]
-                          : "application.pdf";
+                            const response = await axiosInstance.get(url, {
+                              responseType: "blob",
+                              headers: { "ngrok-skip-browser-warning": "true" },
+                            });
 
-                        const link = document.createElement("a");
-                        link.href = URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      }}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
-                    >
-                      {t("downloadPDF")}
-                    </button>
-                  </div>
+                            const contentDisposition =
+                              response.headers["content-disposition"];
+                            const filenameMatch =
+                              contentDisposition?.match(/filename="?([^"]+)"?/);
+                            const filename = filenameMatch
+                              ? filenameMatch[1]
+                              : "application.pdf";
+
+                            const blob = new Blob([response.data]);
+                            const link = document.createElement("a");
+                            link.href = URL.createObjectURL(blob);
+                            link.download = filename;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          } catch (error) {
+                            console.error("PDF yuklab olishda xatolik:", error);
+                          }
+                        }}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                      >
+                        {t("downloadPDF")}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

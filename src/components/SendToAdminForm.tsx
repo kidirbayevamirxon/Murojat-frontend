@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,13 +29,46 @@ export default function SendToAdminForm({
   const [selectedStatus, setSelectedStatus] = useState<string>(
     application.application_status || "review"
   );
-
-  // Fayllar uchun holatlar
+  const [status, setStatus] = useState("");
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
   const [adminPhotos, setAdminPhotos] = useState<FileList | null>(null);
 
-  // 📁 Fayllarni yuklash funksiyasi
+  const availableStatuses = useMemo(() => {
+    switch (application.application_status) {
+      case "review":
+        return ["accepted", "admin_approval", "not_completed"];
+      case "accepted":
+        return ["admin_approval", "not_completed", "review"];
+      case "admin_approval":
+        return ["accepted", "not_completed"];
+      case "not_completed":
+        return ["review"];
+      default:
+        return ["review", "accepted", "not_completed"];
+    }
+  }, [application.application_status]);
+
+  const showDays = useMemo(() => {
+    switch (status) {
+      case "accepted":
+      case "admin_approval":
+      case "not_completed":
+        return false;
+      default:
+        return true;
+    }
+  }, [status]);
+
+  const showText = useMemo(() => {
+    switch (status) {
+      case "accepted":
+      case "admin_approval":
+        return false;
+      default:
+        return true;
+    }
+  }, [status]);
   const uploadFiles = async () => {
     const formData = new FormData();
 
@@ -69,7 +102,6 @@ export default function SendToAdminForm({
     return null;
   };
 
-  // 📤 Asosiy yuborish funksiyasi
   const handleSend = async () => {
     if (!application?.application_id) {
       toast.error(t("no_data"));
@@ -84,8 +116,8 @@ export default function SendToAdminForm({
       const payload = {
         application_id: application.application_id,
         text: message,
-        days: Number(days || 0),
-        status: selectedStatus === "sent_to_organ" ? "review" : selectedStatus,
+        days: showDays ? Number(days || 0) : 0,
+        status: status,
         citizen_file: uploaded?.citizen_file || null,
         admin_extra_file: uploaded?.admin_extra_file || null,
         admin_photos: uploaded?.admin_photos || null,
@@ -116,39 +148,43 @@ export default function SendToAdminForm({
 
   return (
     <div className="space-y-4 border-t pt-4 mt-4">
-      <div>
-        <Label>{t("organText")}</Label>
-        <Textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="min-h-[100px]"
-        />
-      </div>
+      {showText && (
+        <div>
+          <Label>{t("organText")}</Label>
+          <Textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="min-h-[100px]"
+          />
+        </div>
+      )}
 
-      <div>
-        <Label>{t("days")}</Label>
-        <Input
-          type="number"
-          value={days}
-          onChange={(e) => setDays(e.target.value)}
-        />
-      </div>
-
+      {showDays && (
+        <div>
+          <Label>{t("days")}</Label>
+          <Input
+            type="number"
+            value={days}
+            onChange={(e) => setDays(e.target.value)}
+          />
+        </div>
+      )}
       <div>
         <Label>{t("status")}</Label>
         <select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
           className="mt-1 p-2 rounded-md border bg-muted/50 w-full"
         >
-          <option value="review">{t("review")}</option>
-          <option value="accepted">{t("accepted")}</option>
-          <option value="admin_approval">{t("admin_approval")}</option>
-          <option value="not_completed">{t("Not Completed")}</option>
+          {availableStatuses.map((status) => (
+            <option key={status} value={status}>
+              {t(status)}
+            </option>
+          ))}
         </select>
       </div>
 
-      {selectedStatus === "admin_approval" && (
+      {["admin_approval",].includes(status) && (
         <div className="flex flex-col gap-3 pt-2">
           <div>
             <Label>{t("citizenFile")}</Label>
@@ -178,7 +214,8 @@ export default function SendToAdminForm({
           </div>
         </div>
       )}
- <Button
+
+      <Button
         onClick={handleSend}
         disabled={loading}
         className="mt-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white w-full rounded-lg"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
 import { axiosInstance } from "@/api/api";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 interface Organization {
   id: number;
   name: string;
+  organization_id: number;
 }
 
 interface Application {
@@ -42,68 +43,74 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
 
   useEffect(() => setStatus(initialStatus), [initialStatus]);
 
-  /** 🔍 Tashkilotlarni nomi orqali qidirish */
-  const fetchOrganizations = async (query: string) => {
-    if (!query.trim()) {
+const fetchOrganizations = async (query: string) => {
+  if (!query.trim()) {
+    setOrgSuggestions([]);
+    return;
+  }
+
+  try {
+    const res = await axiosInstance.get(`/admin/send_organ/get_orgs?org_name=${query}`);
+    if (Array.isArray(res.data)) {
+      const formattedOrgs = res.data.map((org: any) => ({
+        ...org,
+        organization_id: org.id,
+      }));
+      setOrgSuggestions(formattedOrgs);
+    } else {
       setOrgSuggestions([]);
-      return;
     }
-
-    try {
-      const res = await axiosInstance.get(`/admin/send_organ/get_orgs?org_name=${query}`);
-      setOrgSuggestions(Array.isArray(res.data) ? res.data : []);
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        toast.error(t("sessionExpired"));
-        navigate("/login");
-      } else {
-        console.error("fetchOrganizations error:", error);
-        toast.error(t("fetchError"));
-      }
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      toast.error(t("sessionExpired"));
+      navigate("/login");
+    } else {
+      console.error("fetchOrganizations error:", error);
+      toast.error(t("fetchError"));
     }
-  };
+  }
+};
 
-  /** 📤 Arizani tashkilotga yuborish */
-  const handleSendOrgan = async () => {
-    if (!selectedStatus) return toast.error(t("selectStatusWarning"));
-    if (!orgId) return toast.error(t("selectOrganizationWarning"));
 
-    try {
-      setLoading(true);
-      await axiosInstance.post("/admin/send_organ", {
-        application_id: application.application_id,
-        org_id: orgId,
-        text,
-        status: selectedStatus,
-        days: Number(days),
-      });
-      toast.success(t("sendSuccess"));
-      setText("");
-      setDays(undefined);
-      setOrgName("");
-      setOrgId(null);
-      setSelectedStatus("");
-      onSendSuccess();
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        toast.error(t("sessionExpired"));
-        navigate("/login");
-      } else {
-        toast.error(t("sendError"));
-      }
-    } finally {
-      setLoading(false);
+const handleSendOrgan = async () => {
+  if (!selectedStatus) return toast.error(t("selectStatusWarning"));
+
+  const payloadOrgId = orgId || (orgSuggestions.length > 0 ? orgSuggestions[0].organization_id : null);
+  
+  try {
+    setLoading(true);
+    await axiosInstance.post("/admin/send_organ", {
+      application_id: application.application_id,
+      org_id: payloadOrgId,
+      text,
+      status: selectedStatus,
+      days: Number(days),
+    });
+    toast.success(t("sendSuccess"));
+    setText("");
+    setDays(undefined);
+    setOrgName("");
+    setOrgId(null);
+    setSelectedStatus("");
+    onSendSuccess();
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      toast.error(t("sessionExpired"));
+      navigate("/login");
+    } else {
+      toast.error(t("sendError"));
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
-  /** 📅 Sanani formatlash */
   const formatDateTime = (dateString: string) => {
     if (!dateString) return "—";
     const date = new Date(dateString);
     return date.toLocaleString("en-GB");
   };
 
-  /** 🔄 Status variantlarini aniqlash */
   const getStatusOptions = () => {
     switch (status) {
       case "pending":
@@ -117,44 +124,61 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
         return ["sent_to_organ", "not_completed"];
     }
   };
-
+  const showDays = useMemo(() => {
+    switch (selectedStatus) {
+      case "completed":
+      case "not_completed":
+        return false;
+      default:
+        return true;
+    }
+  }, [selectedStatus]);
+  const showText = useMemo(() => {
+    switch (selectedStatus) {
+      case "completed":
+      case "not_completed":
+        return false;
+      default:
+        return true;
+    }
+  }, [selectedStatus]);
   return (
     <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-      {/* Header */}
       <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           {t("sendToOrgan")}
         </h2>
       </div>
-
-      {/* Body */}
       <div className="p-5 space-y-4">
-        {/* Xabar matni */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t("messageText")}
-          </label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={t("writeMessageToOrgan")}
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-          />
-        </div>
-        {/* Kunlar va Status */}
-        <div className="grid grid-cols-2 gap-3">
+        {showText && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t("days")}
+              {t("messageText")}
             </label>
-            <input
-              type="number"
-              value={days || ""}
-              onChange={(e) => setDays(Number(e.target.value))}
-              placeholder="0"
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={t("writeMessageToOrgan")}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
             />
           </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          {showDays && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("days")}
+              </label>
+              <input
+                type="number"
+                value={days || ""}
+                onChange={(e) => setDays(Number(e.target.value))}
+                placeholder="0"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+              />
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("status")}
@@ -173,9 +197,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
             </select>
           </div>
         </div>
-
-        {/* Tashkilot nomi */}
-        <div className="relative">
+        {status==="pending" &&(
+          <div className="relative">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             {t("organization")}
           </label>
@@ -192,8 +215,6 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
             placeholder={t("enterOrganizationName")}
             className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
           />
-
-          {/* Autocomplete list */}
           {showSuggestions && orgSuggestions.length > 0 && (
             <ul className="absolute z-50 bg-white dark:bg-[#1a2533] border border-gray-200 dark:border-gray-700 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
               {orgSuggestions.map((org) => (
@@ -212,8 +233,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
             </ul>
           )}
         </div>
-
-        {/* Yuborish tugmasi */}
+        )}
+        
         <button
           onClick={handleSendOrgan}
           disabled={loading}
@@ -222,8 +243,6 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
           <Upload size={16} />
           {loading ? t("sending") : t("sendToOrganButton")}
         </button>
-
-        {/* Hozirgi holat */}
         {application.organ_text && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
