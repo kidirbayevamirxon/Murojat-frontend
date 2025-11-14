@@ -15,6 +15,7 @@ interface Application {
   application_id: number;
   organ_text?: string;
   organ_deadline_time?: string;
+  organization_id?: number;
 }
 
 interface SendToOrganProps {
@@ -43,67 +44,66 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
 
   useEffect(() => setStatus(initialStatus), [initialStatus]);
 
-const fetchOrganizations = async (query: string) => {
-  if (!query.trim()) {
-    setOrgSuggestions([]);
-    return;
-  }
-
-  try {
-    const res = await axiosInstance.get(`/admin/send_organ/get_orgs?org_name=${query}`);
-    if (Array.isArray(res.data)) {
-      const formattedOrgs = res.data.map((org: any) => ({
-        ...org,
-        organization_id: org.id,
-      }));
-      setOrgSuggestions(formattedOrgs);
-    } else {
+  const fetchOrganizations = async (query: string) => {
+    if (!query.trim()) {
       setOrgSuggestions([]);
+      return;
     }
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      toast.error(t("sessionExpired"));
-      navigate("/login");
-    } else {
-      console.error("fetchOrganizations error:", error);
-      toast.error(t("fetchError"));
+
+    try {
+      const res = await axiosInstance.get(
+        `/admin/send_organ/get_orgs?org_name=${query}`
+      );
+      if (Array.isArray(res.data)) {
+        const formattedOrgs = res.data.map((org: any) => ({
+          ...org,
+          organization_id: org.id,
+        }));
+        setOrgSuggestions(formattedOrgs);
+      } else {
+        setOrgSuggestions([]);
+      }
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        console.error("fetchOrganizations error:", error);
+        toast.error(t("fetchError"));
+      }
     }
-  }
-};
+  };
 
-
-const handleSendOrgan = async () => {
-  if (!selectedStatus) return toast.error(t("selectStatusWarning"));
-
-  const payloadOrgId = orgId || (orgSuggestions.length > 0 ? orgSuggestions[0].organization_id : null);
-  
-  try {
-    setLoading(true);
-    await axiosInstance.post("/admin/send_organ", {
-      application_id: application.application_id,
-      org_id: payloadOrgId,
-      text,
-      status: selectedStatus,
-      days: Number(days),
-    });
-    toast.success(t("sendSuccess"));
-    setText("");
-    setDays(undefined);
-    setOrgName("");
-    setOrgId(null);
-    setSelectedStatus("");
-    onSendSuccess();
-  } catch (err: any) {
-    if (err.response?.status === 401) {
-      toast.error(t("sessionExpired"));
-      navigate("/login");
-    } else {
-      toast.error(t("sendError"));
+  const handleSendOrgan = async () => {
+    if (!selectedStatus) return toast.error(t("selectStatusWarning"));
+    const payloadOrgId = orgId || application.organization_id;
+    try {
+      setLoading(true);
+      await axiosInstance.post("/admin/send_organ", {
+        application_id: application.application_id,
+        org_id: payloadOrgId,
+        text,
+        status: selectedStatus,
+        days: Number(days),
+      });
+      toast.success(t("sendSuccess"));
+      setText("");
+      setDays(undefined);
+      setOrgName("");
+      setOrgId(null);
+      setSelectedStatus("");
+      onSendSuccess();
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error(t("sessionExpired"));
+        navigate("/login");
+      } else {
+        toast.error(t("sendError"));
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const formatDateTime = (dateString: string) => {
     if (!dateString) return "—";
@@ -197,44 +197,44 @@ const handleSendOrgan = async () => {
             </select>
           </div>
         </div>
-        {status==="pending" &&(
+        {status === "pending" && (
           <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t("organization")}
-          </label>
-          <input
-            type="text"
-            value={orgName}
-            onChange={(e) => {
-              const val = e.target.value;
-              setOrgName(val);
-              setShowSuggestions(true);
-              fetchOrganizations(val);
-            }}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            placeholder={t("enterOrganizationName")}
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
-          />
-          {showSuggestions && orgSuggestions.length > 0 && (
-            <ul className="absolute z-50 bg-white dark:bg-[#1a2533] border border-gray-200 dark:border-gray-700 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
-              {orgSuggestions.map((org) => (
-                <li
-                  key={org.id}
-                  onClick={() => {
-                    setOrgName(org.name);
-                    setOrgId(org.id);
-                    setShowSuggestions(false);
-                  }}
-                  className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition"
-                >
-                  {org.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {t("organization")}
+            </label>
+            <input
+              type="text"
+              value={orgName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setOrgName(val);
+                setShowSuggestions(true);
+                fetchOrganizations(val);
+              }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              placeholder={t("enterOrganizationName")}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-[#1a2533] text-gray-900 dark:text-gray-100"
+            />
+            {showSuggestions && orgSuggestions.length > 0 && (
+              <ul className="absolute z-50 bg-white dark:bg-[#1a2533] border border-gray-200 dark:border-gray-700 rounded-lg mt-1 w-full shadow-lg max-h-48 overflow-auto">
+                {orgSuggestions.map((org) => (
+                  <li
+                    key={org.id}
+                    onClick={() => {
+                      setOrgName(org.name);
+                      setOrgId(org.id);
+                      setShowSuggestions(false);
+                    }}
+                    className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition"
+                  >
+                    {org.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
-        
+
         <button
           onClick={handleSendOrgan}
           disabled={loading}

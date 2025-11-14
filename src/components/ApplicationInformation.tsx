@@ -273,16 +273,13 @@ const ApplicationInformation = () => {
                     </span>
                     {getStatusBadge(application.application_status)}
                   </div>
-                  {["completed", "admin_approval"].includes(
-                    application.application_status
-                  ) && (
                     <div className="flex gap-3 pt-4">
                       <button
                         onClick={async () => {
                           try {
                             const lang = localStorage.getItem("lang") || "uz";
                             const url = `/admin/${application.application_id}/export-word?lang=${lang}`;
-
+                            
                             const response = await axiosInstance.get(url, {
                               responseType: "blob",
                               headers: { "ngrok-skip-browser-warning": "true" },
@@ -311,9 +308,12 @@ const ApplicationInformation = () => {
                           }
                         }}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-                      >
+                        >
                         {t("downloadWord")}
                       </button>
+                      {["completed", "admin_approval"].includes(
+                        application.application_status
+                      ) && (
                       <button
                         onClick={async () => {
                           try {
@@ -347,8 +347,8 @@ const ApplicationInformation = () => {
                       >
                         {t("downloadPDF")}
                       </button>
-                    </div>
                   )}
+                    </div>
                 </div>
               </div>
             </div>
