@@ -103,7 +103,7 @@ export default function Organ() {
 
   return (
     <div
-      className={`p-6 min-h-[95vh] transition-colors duration-300 ${
+      className={`p-4 min-h-[85vh] transition-colors duration-300 ${
         theme === "dark"
           ? "bg-[#101922] text-gray-100"
           : "bg-gradient-to-b from-white to-blue-50 text-gray-900"

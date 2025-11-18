@@ -8,11 +8,12 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 export default function Settings() {
   const { theme, setTheme } = useTheme();
   const { i18n, t } = useTranslation();
-
+  const navigate = useNavigate();
   const handleLangChange = (lang: "uz" | "ru" | "kaa") => {
     localStorage.setItem("lang", lang);
     i18n.changeLanguage(lang);
@@ -25,7 +26,7 @@ export default function Settings() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-[#101922] font-display text-slate-800 dark:text-slate-200 transition-colors duration-300">
-      <header className="bg-white dark:bg-[#101922]/80 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+      {/* <header className="bg-white dark:bg-[#101922]/80 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -35,7 +36,7 @@ export default function Settings() {
             </div>
           </div>
         </div>
-      </header>
+      </header> */}
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl mx-auto space-y-12">
           <div className="mb-8">
@@ -87,7 +88,7 @@ export default function Settings() {
             <h3 className="text-lg font-semibold mb-4 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">
               {t("settings.localization") || "Localization"}
             </h3>
-            <div className="py-6">
+            <div className="py-2">
               <label
                 htmlFor="language"
                 className="block text-base font-medium text-slate-800 dark:text-slate-200 mb-2"
@@ -104,7 +105,10 @@ export default function Settings() {
                   <label className="text-gray-700 dark:text-gray-300">
                     {t("choose_language")}
                   </label>
-                  <Select value={i18n.language} onValueChange={handleLangChange}>
+                  <Select
+                    value={i18n.language}
+                    onValueChange={handleLangChange}
+                  >
                     <SelectTrigger className="w-[200px]">
                       <SelectValue
                         placeholder={t("select_language")}
@@ -119,6 +123,17 @@ export default function Settings() {
                   </Select>
                 </div>
               </div>
+            </div>
+          </section>
+          <section>
+            <div className="w-full mb-6">
+              <Button
+                onClick={() => navigate("/login")}
+                variant="destructive"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg"
+              >
+                {t("logOut")}
+              </Button>
             </div>
           </section>
         </div>

@@ -101,7 +101,7 @@ const OrganizationsTable: React.FC = () => {
         <h1 className="text-2xl font-bold">{t("organizations")}</h1>
         <div className="flex items-center gap-4">
           <button
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md ml-2"
             onClick={() => setDrawerOpen(true)}
           >
             <span className="text-lg font-bold">+</span> {t("addOrganization")}

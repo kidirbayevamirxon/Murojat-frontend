@@ -92,18 +92,27 @@ export default function OrganInfarmation() {
   );
 
   return (
-    <div className="p-8 bg-gray-50 dark:bg-[#101922] min-h-screen transition-colors">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-400 dark:to-indigo-500">
+    <div className="p-2 bg-gray-50 dark:bg-[#101922] min-h-screen transition-colors">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h1
+          className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r 
+    from-blue-600 to-indigo-700 dark:from-blue-400 dark:to-indigo-500"
+        >
           {t("applicationDetails")}
         </h1>
+
         <button
           onClick={() => window.history.back()}
-          className="px-5 py-2 bg-white dark:bg-[#1a2533] text-gray-700 dark:text-gray-100 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-gray-100 dark:hover:bg-[#1e2a38] flex items-center gap-2 transition-all"
+          className="w-full sm:w-auto px-5 py-2 bg-white dark:bg-[#1a2533] 
+      text-gray-700 dark:text-gray-100 rounded-lg border 
+      border-gray-200 dark:border-gray-700 shadow-sm 
+      hover:bg-gray-100 dark:hover:bg-[#1e2a38] 
+      flex items-center justify-center gap-2 transition-all"
         >
           <ArrowLeft size={18} /> {t("backToList")}
         </button>
       </div>
+
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-5">
           <div className="bg-white dark:bg-[#1a2533] rounded-2xl shadow-sm hover:shadow-md transition p-6 border border-gray-100 dark:border-gray-700">

@@ -128,7 +128,26 @@ export default function Applications() {
           />
         </div>
       </div>
-      <div className="relative border-none pb-2 mb-4 overflow-x-auto">
+      <div className="lg:hidden mb-4">
+        <select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value as StatusKey)}
+          className="
+      w-full p-3 rounded-lg border
+      border-gray-300 dark:border-[#2B3648]
+      bg-white dark:bg-[#1A2433]
+      text-gray-900 dark:text-[#E4E9F2]
+      text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+    "
+        >
+          {tabs.map((tab) => (
+            <option key={tab} value={tab}>
+              {STATUS_DISPLAY_MAP[tab]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="relative border-none pb-2 mb-4 overflow-x-auto hidden lg:block">
         <div className="flex gap-6 relative">
           {tabs.map((tab) => (
             <button
@@ -153,6 +172,7 @@ export default function Applications() {
         </div>
         <div className="absolute bottom-2 left-0 right-0 h-[2px] bg-[#F3F4F6] z-0" />
       </div>
+
       <div
         className="overflow-x-auto border rounded-lg"
         style={{ borderColor: "#DEDEDF" }}

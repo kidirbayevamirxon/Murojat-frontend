@@ -13,12 +13,12 @@ export default function OrganSidebarLayout() {
   const menu = [
     {
       name: t("applications"),
-      icon: <LucideBuilding2 size={18} />,
+      icon: <LucideBuilding2 size={22} />,
       path: "/organ",
     },
     {
       name: t("settings"),
-      icon: <SettingsIcon size={18} />,
+      icon: <SettingsIcon size={22} />,
       path: "/organ/settings",
     },
   ];
@@ -32,7 +32,7 @@ export default function OrganSidebarLayout() {
       }`}
     >
       <aside
-        className={`w-64 border-r p-4 flex flex-col transition-colors duration-300 ${
+        className={`hidden lg:flex w-64 border-r p-4 flex-col transition-colors duration-300 ${
           theme === "dark"
             ? "bg-[#101922] border-gray-800"
             : "bg-white border-gray-200"
@@ -64,11 +64,9 @@ export default function OrganSidebarLayout() {
             </button>
           ))}
         </nav>
-        <div className="border-t-2 mt-[70vh] w-full">
+        <div className="border-t mt-auto w-full">
           <Button
-            onClick={() => {
-              navigate("/login");
-            }}
+            onClick={() => navigate("/login")}
             variant="destructive"
             className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4"
           >
@@ -76,8 +74,31 @@ export default function OrganSidebarLayout() {
           </Button>
         </div>
       </aside>
+      <nav
+        className={`lg:hidden fixed bottom-0 left-0 w-full flex justify-around py-3 border-t z-50 ${
+          theme === "dark"
+            ? "bg-[#101922] border-gray-800 text-gray-100"
+            : "bg-white border-gray-300 text-gray-900"
+        }`}
+      >
+        {menu.map((item) => (
+          <button
+            key={item.name}
+            onClick={() => navigate(item.path)}
+            className={`flex flex-col items-center text-xs ${
+              location.pathname === item.path
+                ? "text-blue-600"
+                : theme === "dark"
+                ? "text-gray-400"
+                : "text-gray-600"
+            }`}
+          >
+            {item.icon}
+          </button>
+        ))}
+      </nav>
       <main
-        className={`flex-1 p-6 overflow-auto transition-colors duration-300 ${
+        className={`flex-1 p-6 overflow-auto pb-20 lg:pb-6 transition-colors duration-300 ${
           theme === "dark" ? "bg-[#101922] text-gray-100" : "bg-gray-50"
         }`}
       >
