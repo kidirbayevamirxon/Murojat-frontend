@@ -26,9 +26,9 @@ export default function SendToAdminForm({
   const [message, setMessage] = useState("");
   const [days, setDays] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string>(
-    application.application_status || "review"
-  );
+  // const [selectedStatus, setSelectedStatus] = useState<string>(
+  //   application.application_status || "review"
+  // );
   const [status, setStatus] = useState("");
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
