@@ -29,7 +29,10 @@ const OrganizationsTable: React.FC = () => {
   } | null>(null);
   const [theme, _setTheme] = useState(localStorage.getItem("theme") || "light");
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     const fetchWarnings = async () => {
       try {
