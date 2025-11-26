@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -14,14 +14,14 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(
-    (localStorage.getItem("theme") as Theme) || "system"
+    (localStorage.getItem("theme") as Theme) || "light"
   );
 
   useEffect(() => {
     const root = window.document.documentElement;
 
     const applyTheme = (themeValue: Theme) => {
-      if (themeValue === "system") {
+      if (themeValue === "light") {
         const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         root.classList.toggle("dark", isDark);
       } else {
