@@ -11,6 +11,7 @@ import Settings from "@/pages/Settings";
 import Organ from "@/pages/Organ";
 import OrganSidebarLayout from "@/layout/OrganSideBarLayout";
 import OrganInfarmation from "@/components/OrganInfarmation";
+import QuarterTable from "@/pages/Quarter";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Organizations /> },
       { path: "applications", element: <Applications /> },
       { path: "applications/info/:id", element: <ApplicationInformation /> },
+      {path: "quarters", element: <QuarterTable/>},
       { path: "statistics", element: <AdminStatistics /> },
       { path: "statistics/:id", element: <AdminStatisticsDetail /> },
       {path: "settings", element: <Settings />},

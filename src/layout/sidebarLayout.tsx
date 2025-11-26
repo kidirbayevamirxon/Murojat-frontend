@@ -5,6 +5,7 @@ import {
   Grid2X2,
   BarChart4,
   SettingsIcon,
+  MapPin
 } from "lucide-react";
 import { useTheme } from "@/context/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,11 @@ export default function SidebarLayout() {
       name: t("applications"),
       icon: <Grid2X2 size={20} />,
       path: "/applications",
+    },
+    {
+      name:t("quarters"),
+      icon: <MapPin size={20} />,
+      path: "/quarters",
     },
     {
       name: t("statistics"),

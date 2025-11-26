@@ -220,3 +220,20 @@ tomorrow,Завтра,Ertaga,Ertende
 within5Days,В течение 5 дней,5 kun ichida,5 kún ishinde
 within15Days,В течение 15 дней,15 kun ichida,15 kún ishinde
 close,Закрыть,Yopish,Jabıw
+addSuccess,Успешно добавлено,Muvaffaqiyatli qo‘shildi,Muwaffaqiyatli qoshuv
+addError,Ошибка при добавлении,Qo‘shishda xatolik,Qoshuvda xataliq
+updateSuccess,Успешно обновлено,Muvaffaqiyatli yangilandi,Muwaffaqiyatli yangilanish
+updateError,Ошибка при обновлении,Yangilashda xatolik,Yangilanishda xataliq
+deleteSuccess,Успешно удалено,Muvaffaqiyatli o‘chirildi,Muwaffaqiyatli öchirish
+deleteError,Ошибка при удалении,O‘chirishda xatolik,Öchirishda xataliq
+saving,Сохраняется,Saqlanmoqda,Saqlanmaqta
+deleting,Удаляется,O‘chirilyapti,Öchirilip tur
+quarters,Микрорайон,Mahala,Mahale
+addQuarter,Добавить Микрорайон,Mahala qo‘shish,Mahale qoshuv
+editQuarter,Редактировать Микрорайон,Mahalani tahrirlash,Mahaleni tahrirlash
+deleteQuarter,Удалить Микрорайон,Mahalani o‘chirish,Mahaleni öchirish
+noOrganizations,Нет организаций,Tashkilotlar yo‘q,Tashkilotlar yo‘q
+noQuarters,Нет Микрорайон,Mahalalar yo‘q,Mahaleler jo‘q
+previous,Предыдущая,Oldingi,Oldingi
+next,Следующая,Keyingi,Keyingi
+pageInfo,Страница {{current}} из {{total}},Sahifa {{current}} / {{total}},Sahifa {{current}} / {{total}}

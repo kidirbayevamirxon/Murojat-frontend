@@ -13,6 +13,7 @@ import {
 import { useTheme } from "@/context/theme-provider";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import OrganWarningModal from "@/components/OrganWarningModal";
 
 interface Application {
   id: number;
@@ -64,6 +65,36 @@ export default function Organ() {
   const [loading, setLoading] = useState<boolean>(false);
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const [showWarning, setShowWarning] = useState(false);
+  const [warnings, setWarnings] = useState<any>({});
+  useEffect(() => {
+    const getWarnings = async () => {
+      try {
+        const res = await axiosInstance.get("/organ/warning/apps");
+        const d = res.data;
+        const mapped = {
+          accepted: d.accepted || 0,
+          sentToOrgan: {
+            today: d.sent_to_organ?.today || 0,
+            tomorrow: d.sent_to_organ?.tomorrow || 0,
+            within5Days: d.sent_to_organ?.within_5_days || 0,
+            within15Days: d.sent_to_organ?.within_15_days || 0,
+          },
+          review: {
+            today: d.review?.today || 0,
+            tomorrow: d.review?.tomorrow || 0,
+            within5Days: d.review?.within_5_days || 0,
+            within15Days: d.review?.within_15_days || 0,
+          },
+        };
+        setWarnings(mapped);
+        setShowWarning(true);
+      } catch (error) {
+        toast.error(t("fetchError"));
+      }
+    };
+    getWarnings();
+  }, []);
 
   const getApplications = async () => {
     try {
@@ -109,6 +140,11 @@ export default function Organ() {
           : "bg-gradient-to-b from-white to-blue-50 text-gray-900"
       }`}
     >
+      <OrganWarningModal
+        open={showWarning}
+        onClose={() => setShowWarning(false)}
+        data={warnings}
+      />
       <h1 className="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-400">
         {t("applications")}
       </h1>
