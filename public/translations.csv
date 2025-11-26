@@ -228,12 +228,12 @@ deleteSuccess,Успешно удалено,Muvaffaqiyatli o‘chirildi,Muwaffaq
 deleteError,Ошибка при удалении,O‘chirishda xatolik,Öchirishda xataliq
 saving,Сохраняется,Saqlanmoqda,Saqlanmaqta
 deleting,Удаляется,O‘chirilyapti,Öchirilip tur
-quarters,Микрорайон,Mahala,Mahale
-addQuarter,Добавить Микрорайон,Mahala qo‘shish,Mahale qoshuv
-editQuarter,Редактировать Микрорайон,Mahalani tahrirlash,Mahaleni tahrirlash
-deleteQuarter,Удалить Микрорайон,Mahalani o‘chirish,Mahaleni öchirish
+quarters,Махалла,Mahala,Mahale
+addQuarter,Добавить Махалла,Mahala qo‘shish,Mahale qoshuv
+editQuarter,Редактировать Махалла,Mahalani tahrirlash,Mahaleni tahrirlash
+deleteQuarter,Удалить Махалла,Mahalani o‘chirish,Mahaleni öchirish
 noOrganizations,Нет организаций,Tashkilotlar yo‘q,Tashkilotlar yo‘q
-noQuarters,Нет Микрорайон,Mahalalar yo‘q,Mahaleler jo‘q
+noQuarters,Нет Махалла,Mahalalar yo‘q,Mahaleler jo‘q
 previous,Предыдущая,Oldingi,Oldingi
 next,Следующая,Keyingi,Keyingi
 pageInfo,Страница {{current}} из {{total}},Sahifa {{current}} / {{total}},Sahifa {{current}} / {{total}}

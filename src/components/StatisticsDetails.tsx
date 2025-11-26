@@ -155,7 +155,9 @@ export default function AdminStatisticsDetail() {
                     <td className="p-3">{t(row.name)}</td>
                     <td className="p-3 font-semibold">{row.value}</td>
                     <td className="p-3">
-                      {((row.value / total) * 100).toFixed(1)}%
+                      {total === 0
+                        ? "0%"
+                        : `${((row.value / total) * 100).toFixed(1)}%`}
                     </td>
                   </tr>
                 ))}
