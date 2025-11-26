@@ -20,7 +20,7 @@ export default function Settings() {
   };
 
   const handleThemeChange = (mode: string) => {
-    setTheme(mode as "light" | "dark" | "system");
+    setTheme(mode as "light" | "dark");
     localStorage.setItem("theme", mode);
   };
 
