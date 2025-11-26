@@ -128,8 +128,11 @@ export default function Settings() {
           <section>
             <div className="w-full mb-6">
               <Button
-                onClick={() => navigate("/login")}
-                variant="destructive"
+                onClick={() => {
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+              }}
+              variant="destructive"
                 className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg"
               >
                 {t("logOut")}

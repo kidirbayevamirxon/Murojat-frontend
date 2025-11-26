@@ -65,13 +65,18 @@ export default function OrganSidebarLayout() {
           ))}
         </nav>
         <div className="border-t mt-auto w-full">
-          <Button
-            onClick={() => navigate("/login")}
-            variant="destructive"
-            className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4"
-          >
-            {t("logOut")}
-          </Button>
+          <div className="border-t mt-auto w-full">
+            <Button
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+              }}
+              variant="destructive"
+              className="bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg mt-4"
+            >
+              {t("logOut")}
+            </Button>
+          </div>
         </div>
       </aside>
       <nav
