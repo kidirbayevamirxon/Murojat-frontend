@@ -23,7 +23,10 @@ export default function Settings() {
     setTheme(mode as "light" | "dark");
     localStorage.setItem("theme", mode);
   };
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-[#101922] font-display text-slate-800 dark:text-slate-200 transition-colors duration-300">
       {/* <header className="bg-white dark:bg-[#101922]/80 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">

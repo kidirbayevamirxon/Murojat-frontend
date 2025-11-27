@@ -43,6 +43,10 @@ export default function OrganInfarmation() {
   const app_id = Number(id);
   const [data, setData] = useState<ApplicationInfo | null>(null);
   const navigate = useNavigate();
+    const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     if (!app_id) return;
     axiosInstance

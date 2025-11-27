@@ -27,7 +27,10 @@ const ApplicationInformation = () => {
     return stored === "dark" ? "dark" : "light";
   });
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");

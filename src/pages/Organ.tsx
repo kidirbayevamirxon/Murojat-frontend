@@ -67,6 +67,10 @@ export default function Organ() {
   const navigate = useNavigate();
   const [showWarning, setShowWarning] = useState(false);
   const [warnings, setWarnings] = useState<any>({});
+    const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     const getWarnings = async () => {
       try {

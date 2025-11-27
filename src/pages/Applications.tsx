@@ -50,7 +50,10 @@ export default function Applications() {
     "returned_to_organ",
     "expired_closed",
   ];
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   const fetchApplications = async () => {
     setLoading(true);
     setError(null);

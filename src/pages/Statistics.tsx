@@ -43,7 +43,10 @@ export default function AdminStatistics() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     setLoading(true);
     axiosInstance

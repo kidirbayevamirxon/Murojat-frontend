@@ -32,7 +32,10 @@ export default function AdminStatisticsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [org, setOrg] = useState<OrganizationDetail | null>(null);
-
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    navigate("/login");
+  }
   useEffect(() => {
     const fetchOrgStats = async () => {
       try {
