@@ -115,15 +115,31 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
     switch (status) {
       case "pending":
       case "review":
-        return ["sent_to_organ", "not_completed"];
+        return [
+          { value: "sent_to_organ", label: t("sent_to_organ_custom") },
+          { value: "not_completed", label: t("not_completed") },
+          { value: "explained", label: t("explained") },
+        ];
+
       case "admin_approval":
-        return ["completed", "returned_to_organ", "not_completed"];
+        return [
+          { value: "completed", label: t("completed") },
+          { value: "returned_to_organ", label: t("returned_to_organ") },
+          { value: "not_completed", label: t("not_completed") },
+          { value: "explained", label: t("explained") },
+        ];
+
       case "sent_to_organ":
       case "not_completed":
       default:
-        return ["sent_to_organ", "not_completed"];
+        return [
+          { value: "sent_to_organ", label: t("sent_to_organ_custom") },
+          { value: "not_completed", label: t("not_completed") },
+          { value: "explained", label: t("explained") },
+        ];
     }
   };
+
   const showDays = useMemo(() => {
     switch (selectedStatus) {
       case "completed":
@@ -190,8 +206,8 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
             >
               <option value="">{t("status_tanlash")}</option>
               {getStatusOptions().map((opt) => (
-                <option key={opt} value={opt}>
-                  {t(opt)}
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </select>

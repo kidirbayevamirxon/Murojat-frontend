@@ -46,6 +46,7 @@ const statusColors: Record<string, string> = {
 
 const statuses = [
   "sent_to_organ",
+  "explained",
   "not_completed",
   "completed",
   "review",
@@ -67,7 +68,7 @@ export default function Organ() {
   const navigate = useNavigate();
   const [showWarning, setShowWarning] = useState(false);
   const [warnings, setWarnings] = useState<any>({});
-    const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
   if (!token) {
     navigate("/login");
   }
@@ -135,6 +136,28 @@ export default function Organ() {
       a.full_name.toLowerCase().includes(search.toLowerCase()) ||
       String(a.id).includes(search)
   );
+  const updateStatusToAccepted = async (applicationId: number) => {
+    try {
+      setLoading(true);
+      const resGet = await axiosInstance.get(`/organ/app_send_admin`, {
+        params: { app_id: applicationId },
+      });
+      const application = resGet.data[0];
+
+      await axiosInstance.post("/admin/send_organ", {
+        status: "accepted",
+        application_id: applicationId,
+        org_id: application.organization_id,
+      });
+
+      await getApplications();
+      navigate(`/organ/info/${applicationId}`);
+    } catch (err) {
+      toast.error(t("updateError"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -229,7 +252,13 @@ export default function Organ() {
                         ? "border-gray-800 hover:bg-gray-800/60"
                         : "hover:bg-blue-50"
                     }`}
-                    onClick={() => navigate(`/organ/info/${a.id}`)}
+                    onClick={() => {
+                      if (a.status === "sent_to_organ") {
+                        updateStatusToAccepted(a.id);
+                      } else {
+                        navigate(`/organ/info/${a.id}`);
+                      }
+                    }}
                   >
                     <td className="py-3 px-4 font-medium">#{a.id}</td>
                     <td className="py-3 px-4">{a.full_name}</td>

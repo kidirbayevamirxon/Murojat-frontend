@@ -16,6 +16,7 @@ export default function Applications() {
   const navigate = useNavigate();
 
   const STATUS_DISPLAY_MAP = {
+    explained: t("explained"),
     not_completed: t("notCompleted"),
     pending: t("pending"),
     sent_to_organ: t("sentToOrgan"),
@@ -41,6 +42,7 @@ export default function Applications() {
 
   const tabs: StatusKey[] = [
     "pending",
+    "explained",
     "completed",
     "not_completed",
     "sent_to_organ",

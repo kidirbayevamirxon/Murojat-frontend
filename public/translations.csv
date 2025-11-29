@@ -78,8 +78,8 @@ noResults,Ничего не найдено,Hech narsa topilmadi,Hesh nárse tab�
 showingResults,Показано {{filtered}} из {{total}} результатов,{{filtered}} ta natija {{total}} tadan,{{filtered}} ta nátiyje {{total}} den
 pending,Ожидание,Kutilmoqda,Kútilip atır
 not_completed,Не завершено,Yakunlanmagan,Juwmaqlanbaǵan
-sent_to_organ,Отправлено в организацию,Tashkilotga yuborilgan,Shólkemge jiberilgen
-completed,Завершено,Yakunlangan,Juwmaqlanǵan
+sent_to_organ,Прибыл в организацию,Tashkilotga kelib tushgan,Shólkemge kelip túsken
+completed,Задача решена.,Ijoby hal qilindi,Shıǵarmaoby sheshildi
 review,На рассмотрении,Ko'rib chiqilmoqda,Kórip shigılıp atır
 accepted,Принято,Qabul qilindi,Qabıllandı
 admin_approval,Подтверждение администратора,Admin tasdigi,Admin tasdigi
@@ -237,3 +237,6 @@ noQuarters,Нет Махалла,Mahalalar yo‘q,Mahaleler jo‘q
 previous,Предыдущая,Oldingi,Oldingi
 next,Следующая,Keyingi,Keyingi
 pageInfo,Страница {{current}} из {{total}},Sahifa {{current}} / {{total}},Sahifa {{current}} / {{total}}
+addPhoto,Прикрепить файл,Fayl qoshish,Fayl qasısh
+sent_to_organ_custom,Отправить в организацию,Tashkilotga yuborish,Shólkemge jiberiw
+explained,Объяснено,Tushuntirildi,Túsindirildi

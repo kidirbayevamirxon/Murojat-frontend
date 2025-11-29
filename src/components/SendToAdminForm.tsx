@@ -26,26 +26,28 @@ export default function SendToAdminForm({
   const [message, setMessage] = useState("");
   const [days, setDays] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [selectedStatus, setSelectedStatus] = useState<string>(
-  //   application.application_status || "review"
-  // );
   const [status, setStatus] = useState("");
+
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
-  const [adminPhotos, setAdminPhotos] = useState<FileList | null>(null);
+
+  // ❗ RASIMLAR UCHUN CHEKSIZ INPUT
+  const [adminPhotosInputs, setAdminPhotosInputs] = useState<(File | null)[]>(
+    []
+  );
 
   const availableStatuses = useMemo(() => {
     switch (application.application_status) {
       case "review":
-        return ["accepted", "admin_approval", "not_completed"];
+        return ["accepted", "admin_approval", "not_completed", "explained"];
       case "accepted":
-        return ["admin_approval", "not_completed", "review"];
+        return ["admin_approval", "not_completed", "review", "explained"];
       case "admin_approval":
-        return ["accepted", "not_completed"];
+        return ["accepted", "not_completed","explained"];
       case "not_completed":
-        return ["review"];
+        return ["review","explained"];
       default:
-        return ["review", "accepted", "not_completed"];
+        return ["review", "accepted", "not_completed", "explained"];
     }
   }, [application.application_status]);
 
@@ -69,21 +71,21 @@ export default function SendToAdminForm({
         return true;
     }
   }, [status]);
+
   const uploadFiles = async () => {
     const formData = new FormData();
 
     if (citizenFile) formData.append("citizen_file", citizenFile);
     if (adminExtraFile) formData.append("admin_extra_file", adminExtraFile);
-    if (adminPhotos) {
-      Array.from(adminPhotos).forEach((file) =>
-        formData.append("admin_photos", file)
-      );
-    }
+
+    adminPhotosInputs.forEach((file) => {
+      if (file) formData.append("admin_photos[]", file);
+    });
 
     if (
       formData.has("citizen_file") ||
       formData.has("admin_extra_file") ||
-      formData.has("admin_photos")
+      formData.has("admin_photos[]")
     ) {
       const token = localStorage.getItem("accessToken");
       const res = await axiosInstance.post(
@@ -130,7 +132,7 @@ export default function SendToAdminForm({
       setDays("");
       setCitizenFile(null);
       setAdminExtraFile(null);
-      setAdminPhotos(null);
+      setAdminPhotosInputs([]);
       onSendSuccess();
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -144,6 +146,21 @@ export default function SendToAdminForm({
     } finally {
       setLoading(false);
     }
+  };
+
+  const addPhotoInput = () => {
+    setAdminPhotosInputs([...adminPhotosInputs, null]);
+  };
+
+  const removePhotoInput = (index: number) => {
+    const updated = adminPhotosInputs.filter((_, i) => i !== index);
+    setAdminPhotosInputs(updated);
+  };
+
+  const handlePhotoChange = (index: number, file: File | null) => {
+    const updated = [...adminPhotosInputs];
+    updated[index] = file;
+    setAdminPhotosInputs(updated);
   };
 
   return (
@@ -169,6 +186,7 @@ export default function SendToAdminForm({
           />
         </div>
       )}
+
       <div>
         <Label>{t("status")}</Label>
         <select
@@ -184,7 +202,7 @@ export default function SendToAdminForm({
         </select>
       </div>
 
-      {["admin_approval",].includes(status) && (
+      {["admin_approval"].includes(status) && (
         <div className="flex flex-col gap-3 pt-2">
           <div>
             <Label>{t("citizenFile")}</Label>
@@ -195,6 +213,7 @@ export default function SendToAdminForm({
               }
             />
           </div>
+
           <div>
             <Label>{t("adminExtraFile")}</Label>
             <Input
@@ -204,13 +223,46 @@ export default function SendToAdminForm({
               }
             />
           </div>
+
           <div>
-            <Label>{t("organFile")}</Label>
-            <Input
-              type="file"
-              multiple
-              onChange={(e) => setAdminPhotos(e.target.files)}
-            />
+            <Label className="font-medium">{t("organFile")}</Label>
+
+            <div className="space-y-3 mt-2">
+              {adminPhotosInputs.map((_file, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30"
+                >
+                  <Input
+                    type="file"
+                    className="flex-1"
+                    onChange={(e) =>
+                      handlePhotoChange(
+                        index,
+                        e.target.files ? e.target.files[0] : null
+                      )
+                    }
+                  />
+
+                  <Button
+                    type="button"
+                    onClick={() => removePhotoInput(index)}
+                    className="rounded-full px-3 py-2 font-bold bg-green-100 text-green-700 hover:bg-green-200 transition"
+                  >
+                    ✕
+                  </Button>
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addPhotoInput}
+                className="w-full border-dashed py-2 rounded-lg font-medium"
+              >
+                ➕ {t("addPhoto")}
+              </Button>
+            </div>
           </div>
         </div>
       )}
@@ -218,7 +270,7 @@ export default function SendToAdminForm({
       <Button
         onClick={handleSend}
         disabled={loading}
-        className="mt-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white w-full rounded-lg"
+        className="mt-3 bg-blue-600 hover:bg-blue-700 text-white w-full rounded-lg"
       >
         {loading ? t("sending") : t("sendMessage")}
       </Button>
