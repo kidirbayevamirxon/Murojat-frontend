@@ -451,7 +451,7 @@ const ApplicationInformation = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
+            {/* <div className="bg-white dark:bg-[#1a2533] rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
               <div className="bg-gray-50 dark:bg-[#141c27] px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                   <FileText size={18} />
@@ -569,7 +569,7 @@ const ApplicationInformation = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           {![
             "completed",
