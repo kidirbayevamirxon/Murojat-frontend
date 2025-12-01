@@ -3,12 +3,12 @@ import { axiosInstance } from "@/api/api";
 import SendToOrgan from "./SentToOrgan";
 import {
   ArrowLeft,
-  FileText,
+  // FileText,
   Calendar,
   User,
   Building,
-  Image,
-  File,
+  // Image,
+  // File,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -58,18 +58,18 @@ const ApplicationInformation = () => {
     }
   };
 
-  const isImageFile = (fileName: string) => {
-    const imageExtensions = [
-      ".jpg",
-      ".jpeg",
-      ".png",
-      ".gif",
-      ".bmp",
-      ".webp",
-      ".svg",
-    ];
-    return imageExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
-  };
+  // const isImageFile = (fileName: string) => {
+  //   const imageExtensions = [
+  //     ".jpg",
+  //     ".jpeg",
+  //     ".png",
+  //     ".gif",
+  //     ".bmp",
+  //     ".webp",
+  //     ".svg",
+  //   ];
+  //   return imageExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
+  // };
 
   useEffect(() => {
     const fetchOrgs = async () => {
@@ -87,32 +87,32 @@ const ApplicationInformation = () => {
     fetchOrgs();
   }, []);
 
-  const getFileIcon = (fileName: string, fileUrl: string) => {
-    if (isImageFile(fileName)) {
-      return (
-        <div className="relative group">
-          <div
-            className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750 transition"
-            onClick={() => setSelectedImage(fileUrl)}
-          >
-            <Image size={24} className="text-gray-400 dark:text-gray-500" />
-          </div>
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition" />
-          <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
-            <div className="bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
-              {t("view")}
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center">
-          <File size={24} className="text-gray-400 dark:text-gray-500" />
-        </div>
-      );
-    }
-  };
+  // const getFileIcon = (fileName: string, fileUrl: string) => {
+  //   if (isImageFile(fileName)) {
+  //     return (
+  //       <div className="relative group">
+  //         <div
+  //           className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750 transition"
+  //           onClick={() => setSelectedImage(fileUrl)}
+  //         >
+  //           <Image size={24} className="text-gray-400 dark:text-gray-500" />
+  //         </div>
+  //         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition" />
+  //         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
+  //           <div className="bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
+  //             {t("view")}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   } else {
+  //     return (
+  //       <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+  //         <File size={24} className="text-gray-400 dark:text-gray-500" />
+  //       </div>
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     fetchApplicationDetails();
@@ -276,47 +276,44 @@ const ApplicationInformation = () => {
                     </span>
                     {getStatusBadge(application.application_status)}
                   </div>
-                    <div className="flex gap-3 pt-4">
-                      <button
-                        onClick={async () => {
-                          try {
-                            const lang = localStorage.getItem("lang") || "uz";
-                            const url = `/admin/${application.application_id}/export-word?lang=${lang}`;
-                            
-                            const response = await axiosInstance.get(url, {
-                              responseType: "blob",
-                              headers: { "ngrok-skip-browser-warning": "true" },
-                            });
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const lang = localStorage.getItem("lang") || "uz";
+                          const url = `/admin/${application.application_id}/export-word?lang=${lang}`;
 
-                            const contentDisposition =
-                              response.headers["content-disposition"];
-                            const filenameMatch =
-                              contentDisposition?.match(/filename="?([^"]+)"?/);
-                            const filename = filenameMatch
-                              ? filenameMatch[1]
-                              : "application.docx";
+                          const response = await axiosInstance.get(url, {
+                            responseType: "blob",
+                            headers: { "ngrok-skip-browser-warning": "true" },
+                          });
 
-                            const blob = new Blob([response.data]);
-                            const link = document.createElement("a");
-                            link.href = URL.createObjectURL(blob);
-                            link.download = filename;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                          } catch (error) {
-                            console.error(
-                              "Word yuklab olishda xatolik:",
-                              error
-                            );
-                          }
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-                        >
-                        {t("downloadWord")}
-                      </button>
-                      {["completed", "admin_approval"].includes(
-                        application.application_status
-                      ) && (
+                          const contentDisposition =
+                            response.headers["content-disposition"];
+                          const filenameMatch =
+                            contentDisposition?.match(/filename="?([^"]+)"?/);
+                          const filename = filenameMatch
+                            ? filenameMatch[1]
+                            : "application.docx";
+
+                          const blob = new Blob([response.data]);
+                          const link = document.createElement("a");
+                          link.href = URL.createObjectURL(blob);
+                          link.download = filename;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        } catch (error) {
+                          console.error("Word yuklab olishda xatolik:", error);
+                        }
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                    >
+                      {t("downloadWord")}
+                    </button>
+                    {["completed", "admin_approval"].includes(
+                      application.application_status
+                    ) && (
                       <button
                         onClick={async () => {
                           try {
@@ -350,8 +347,8 @@ const ApplicationInformation = () => {
                       >
                         {t("downloadPDF")}
                       </button>
-                  )}
-                    </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
