@@ -144,10 +144,11 @@ export default function Organ() {
       });
       const application = resGet.data[0];
 
-      await axiosInstance.post("/admin/send_organ", {
+      await axiosInstance.post("/organ/send_to_admin", {
         status: "accepted",
         application_id: applicationId,
         org_id: application.organization_id,
+   
       });
 
       await getApplications();

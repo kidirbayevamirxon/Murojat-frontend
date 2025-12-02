@@ -93,6 +93,7 @@ const SendToOrgan: React.FC<SendToOrganProps> = ({
       setOrgId(null);
       setSelectedStatus("");
       onSendSuccess();
+      navigate("/applications")
     } catch (err: any) {
       if (err.response?.status === 401) {
         toast.error(t("sessionExpired"));

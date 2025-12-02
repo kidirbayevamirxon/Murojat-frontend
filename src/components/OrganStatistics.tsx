@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "@/api/api";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -22,40 +20,40 @@ interface Applications {
 
 interface OrganizationDetail {
   organization_id: number;
-  organization_name: string;
   applications: Applications;
 }
 
-export default function AdminStatisticsDetail() {
+export default function OrganStatistics() {
   const { t } = useTranslation();
-  const { id } = useParams();
   const navigate = useNavigate();
   const [org, setOrg] = useState<OrganizationDetail | null>(null);
+
   const token = localStorage.getItem("accessToken");
   if (!token) {
     navigate("/login");
   }
+
   useEffect(() => {
     const fetchOrgStats = async () => {
       try {
-        const res = await axiosInstance.get("/admin/statistics");
-        const found = res.data.find(
-          (o: OrganizationDetail) => o.organization_id === Number(id)
-        );
-        setOrg(found);
+        const res = await axiosInstance.get("/organ/statistics");
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setOrg(res.data[0]);
+        } else {
+          toast.error("Ma'lumot topilmadi");
+        }
       } catch (error: any) {
         if (error.response?.status === 401) {
           toast.error("Sessiya tugadi. Qayta tizimga kiring.");
           navigate("/login");
         } else {
-          toast.error("Ma'lumotlarni yuklashda xatolik yuz berdi.");
-          console.error("Statistics fetch error:", error);
+          toast.error("Xatolik yuz berdi");
         }
       }
     };
 
-    if (id) fetchOrgStats();
-  }, [id, navigate]);
+    fetchOrgStats();
+  }, []);
 
   if (!org)
     return (
@@ -73,22 +71,16 @@ export default function AdminStatisticsDetail() {
   const colors = ["#4f46e5", "#22c55e", "#facc15", "#f97316", "#ec4899"];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#101922] p-4 sm:p-6 space-y-6 text-gray-800 dark:text-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#101922] p-4 sm:p-0 space-y-6 text-gray-800 dark:text-gray-200">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
-        <Button
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition"
-        >
-          <ArrowLeft size={16} /> {t("back")}
-        </Button>
-
         <h1 className="text-xl sm:text-2xl font-bold text-center">
           {t("applicationStatisticsFor")}{" "}
           <span className="text-indigo-600 dark:text-indigo-400">
-            {org.organization_name}
+            ID: {org.organization_id}
           </span>
         </h1>
       </div>
+
       <div className="xl:grid-cols-3 gap-4">
         <Card className="bg-white dark:bg-gray-800 shadow-md border border-gray-100 dark:border-gray-700 xl:col-span-2">
           <CardContent className="py-4 pr-3 pl-1 sm:pl-3">
@@ -100,6 +92,7 @@ export default function AdminStatisticsDetail() {
                 {total}
               </div>
             </div>
+
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={chartData} barGap={10}>
                 <XAxis
@@ -149,6 +142,7 @@ export default function AdminStatisticsDetail() {
           </CardContent>
         </Card>
       </div>
+
       <div className="md:grid-cols-2 gap-6">
         <Card className="bg-white dark:bg-gray-800 shadow-md border border-gray-100 dark:border-gray-700">
           <CardContent className="p-4 sm:p-6">

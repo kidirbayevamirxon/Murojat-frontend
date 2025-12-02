@@ -12,6 +12,7 @@ import Organ from "@/pages/Organ";
 import OrganSidebarLayout from "@/layout/OrganSideBarLayout";
 import OrganInfarmation from "@/components/OrganInfarmation";
 import QuarterTable from "@/pages/Quarter";
+import OrganStatistics from "@/components/OrganStatistics";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       {path: "/organ", element: <Organ/>},
       {path: "/organ/info/:id", element: <OrganInfarmation/>},
       {path: "/organ/settings", element: <Settings/>},
+      {path: "/organ/statistics", element: <OrganStatistics/>},
     ]
   },
   {

@@ -25,13 +25,11 @@ export default function SendToAdminForm({
 
   const [message, setMessage] = useState("");
   const [days, setDays] = useState("");
-  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [citizenFile, setCitizenFile] = useState<File | null>(null);
   const [adminExtraFile, setAdminExtraFile] = useState<File | null>(null);
-
-  // ❗ RASIMLAR UCHUN CHEKSIZ INPUT
   const [adminPhotosInputs, setAdminPhotosInputs] = useState<(File | null)[]>(
     []
   );
@@ -43,9 +41,9 @@ export default function SendToAdminForm({
       case "accepted":
         return ["admin_approval", "not_completed", "review", "explained"];
       case "admin_approval":
-        return ["accepted", "not_completed","explained"];
+        return ["accepted", "not_completed", "explained"];
       case "not_completed":
-        return ["review","explained"];
+        return ["review", "explained"];
       default:
         return ["review", "accepted", "not_completed", "explained"];
     }
@@ -72,20 +70,27 @@ export default function SendToAdminForm({
     }
   }, [status]);
 
+  const addPhotoInput = () =>
+    setAdminPhotosInputs([...adminPhotosInputs, null]);
+  const removePhotoInput = (index: number) =>
+    setAdminPhotosInputs(adminPhotosInputs.filter((_, i) => i !== index));
+  const handlePhotoChange = (index: number, file: File | null) => {
+    const updated = [...adminPhotosInputs];
+    updated[index] = file;
+    setAdminPhotosInputs(updated);
+  };
   const uploadFiles = async () => {
     const formData = new FormData();
-
     if (citizenFile) formData.append("citizen_file", citizenFile);
     if (adminExtraFile) formData.append("admin_extra_file", adminExtraFile);
-
-    adminPhotosInputs.forEach((file) => {
-      if (file) formData.append("admin_photos[]", file);
+    adminPhotosInputs.filter(Boolean).forEach((file) => {
+      if (file) formData.append("admin_photos", file);
     });
 
     if (
       formData.has("citizen_file") ||
       formData.has("admin_extra_file") ||
-      formData.has("admin_photos[]")
+      adminPhotosInputs.some(Boolean)
     ) {
       const token = localStorage.getItem("accessToken");
       const res = await axiosInstance.post(
@@ -98,21 +103,14 @@ export default function SendToAdminForm({
           },
         }
       );
-
-      return res.data;
+      return res.data; 
     }
-    return null;
+    return {};
   };
 
   const handleSend = async () => {
-    if (!application?.application_id) {
-      toast.error(t("no_data"));
-      return;
-    }
-
+    setLoading(true);
     try {
-      setLoading(true);
-
       const uploaded = await uploadFiles();
 
       const payload = {
@@ -120,47 +118,24 @@ export default function SendToAdminForm({
         text: message,
         days: showDays ? Number(days || 0) : 0,
         status: status,
-        citizen_file: uploaded?.citizen_file || null,
-        admin_extra_file: uploaded?.admin_extra_file || null,
-        admin_photos: uploaded?.admin_photos || null,
+        citizen_file: uploaded.citizen_file || null,
+        admin_extra_file: uploaded.admin_extra_file || null,
+        admin_photos: uploaded.admin_photos || [],
       };
 
-      await axiosInstance.post("/organ/send_to_admin", payload);
+      const token = localStorage.getItem("accessToken");
+      await axiosInstance.post("/organ/send_to_admin", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       toast.success(t("successfully_sent"));
-      setMessage("");
-      setDays("");
-      setCitizenFile(null);
-      setAdminExtraFile(null);
-      setAdminPhotosInputs([]);
       onSendSuccess();
+      navigate("/organ")
     } catch (err: any) {
-      if (err.response?.status === 401) {
-        toast.error(t("sessionExpired"));
-        navigate("/login");
-      } else {
-        toast.error(
-          `${t("failed_to_send")}: ${err.response?.data?.detail || err.message}`
-        );
-      }
+      toast.error(err.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const addPhotoInput = () => {
-    setAdminPhotosInputs([...adminPhotosInputs, null]);
-  };
-
-  const removePhotoInput = (index: number) => {
-    const updated = adminPhotosInputs.filter((_, i) => i !== index);
-    setAdminPhotosInputs(updated);
-  };
-
-  const handlePhotoChange = (index: number, file: File | null) => {
-    const updated = [...adminPhotosInputs];
-    updated[index] = file;
-    setAdminPhotosInputs(updated);
   };
 
   return (
@@ -194,9 +169,10 @@ export default function SendToAdminForm({
           onChange={(e) => setStatus(e.target.value)}
           className="mt-1 p-2 rounded-md border bg-muted/50 w-full"
         >
-          {availableStatuses.map((status) => (
-            <option key={status} value={status}>
-              {t(status)}
+          <option value="">{t("status_tanlash")}</option>
+          {availableStatuses.map((s) => (
+            <option key={s} value={s}>
+              {t(s)}
             </option>
           ))}
         </select>
@@ -226,7 +202,6 @@ export default function SendToAdminForm({
 
           <div>
             <Label className="font-medium">{t("organFile")}</Label>
-
             <div className="space-y-3 mt-2">
               {adminPhotosInputs.map((_file, index) => (
                 <div
@@ -243,7 +218,6 @@ export default function SendToAdminForm({
                       )
                     }
                   />
-
                   <Button
                     type="button"
                     onClick={() => removePhotoInput(index)}

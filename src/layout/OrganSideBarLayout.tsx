@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Shield, LucideBuilding2, SettingsIcon } from "lucide-react";
+import { Shield, LucideBuilding2, SettingsIcon, BarChart4 } from "lucide-react";
 import { useTheme } from "@/context/theme-provider";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,11 @@ export default function OrganSidebarLayout() {
       name: t("applications"),
       icon: <LucideBuilding2 size={22} />,
       path: "/organ",
+    },
+    {
+      name: t("statistics"),
+      icon: <BarChart4 size={22} />,
+      path: "/organ/statistics",
     },
     {
       name: t("settings"),
