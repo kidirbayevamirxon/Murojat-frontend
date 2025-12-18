@@ -57,7 +57,15 @@ const ApplicationInformation = () => {
       setError(t("loadError"));
     }
   };
-
+  useEffect(() => {
+    if (application?.application_id) {
+      axiosInstance
+        .post("admin/notify", {
+          application_id: application.application_id,
+        })
+        .catch(() => {});
+    }
+  }, [application]);
   // const isImageFile = (fileName: string) => {
   //   const imageExtensions = [
   //     ".jpg",
